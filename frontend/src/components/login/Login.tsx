@@ -1,23 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Logo from "../../assets/logo.png";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Navigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
 
 interface LoginProps {
   user: any;
+  setUser: (user: any) => void;
 }
 
-const Login: React.FC<LoginProps> = ({ user }) => {
-  const navigate = useNavigate();
-
-  if (user) {
-    document.title = "Omniral Media - Login";
-    navigate('/dashboard');
-  }
-
+const Login: React.FC<LoginProps> = ({ user, setUser }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    document.title = "Omniral Media - Login";
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,7 +31,9 @@ const Login: React.FC<LoginProps> = ({ user }) => {
 
       sessionStorage.setItem('token', token);
 
-      navigate('/dashboard');
+      const decodedToken = jwtDecode(token);
+      // @ts-ignore
+      setUser(decodedToken.user);
 
     } catch (error: any) {
       // Handle errors
@@ -46,16 +47,20 @@ const Login: React.FC<LoginProps> = ({ user }) => {
     }
   };
 
-  if (user) return null;
+  if (user) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
         <img src={Logo} alt="Logo" className="w-40 mx-auto" />
 
-        {error && <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg" role="alert">
-          <p>{error}</p>
-        </div>}
+        {error && (
+          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg" role="alert">
+            <p>{error}</p>
+          </div>
+        )}
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">

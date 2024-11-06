@@ -11,7 +11,7 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
   useEffect(() => {
     document.title = "Omniral Media - Dashboard";
     if (!user) navigate('/');
-  }, []);
+  }, [user, navigate]);
 
   return (
     <>
