@@ -6,6 +6,7 @@ import Dashboard from '../dashboard/Dashboard';
 import Navigation from '../navigation/Navigation';
 import NotFound from '../notFound/NotFound';
 import Register from '../register/Register';
+import Invoices from '../invoices/Invoices';
 
 const App: React.FC = () => {
   const [user, setUser] = useState(null);
@@ -26,8 +27,9 @@ const App: React.FC = () => {
         <Routes>
           <Route path="*" element={<NotFound />} />
           <Route path="/" element={<Login user={user} setUser={setUser} />} />
-          <Route path="/users/add" element={<Register user={user} />} />
           <Route path="/dashboard" element={<Dashboard user={user} />} />
+          <Route path="/users/add" element={<Register user={user} />} />
+          <Route path="/invoices" element={<Invoices user={user} />} />
         </Routes>
       </main>
     </Router>

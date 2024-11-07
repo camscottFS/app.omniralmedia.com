@@ -29,7 +29,7 @@ const Navigation: React.FC<NavigationProps> = ({ user, setUser }) => {
             <a href="#product" className="text-gray-700 hover:text-blue-900 transition-colors">
               My Projects
             </a>
-            <a href="#company" className="text-gray-700 hover:text-blue-900 transition-colors">
+            <a href="/invoices" className="text-gray-700 hover:text-blue-900 transition-colors">
               Invoices
             </a>
           </div>
