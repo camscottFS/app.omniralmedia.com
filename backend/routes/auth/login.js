@@ -8,8 +8,15 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // Fetch the user from the database
-    const [rows] = await db.query('SELECT * FROM users WHERE email = ?', [email]);
+    const [rows] = await db.query(
+      `
+      SELECT users.*, clients.clientId
+      FROM users
+      LEFT JOIN clients ON users.id = clients.userId
+      WHERE users.email = ?
+      `,
+      [email]
+    );
 
     if (rows.length === 0) {
       return res.status(400).json({ message: 'Invalid email or password', success: false });
@@ -34,6 +41,7 @@ router.post('/login', async (req, res) => {
         roleId: user.roleId,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
+        clientId: user.clientId || null,
       },
     };
 

@@ -39,7 +39,6 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
       while (page <= totalPages) {
         const response = await axios.get('https://api.harvestapp.com/v2/invoices', {
           headers: {
-            'User-Agent': 'YourAppName (your.email@example.com)',
             'Authorization': `Bearer ${process.env.REACT_APP_HARVEST_ACCESS_TOKEN}`,
             'Harvest-Account-ID': process.env.REACT_APP_HARVEST_ACCOUNT_ID,
             'Content-Type': 'application/json',
@@ -128,7 +127,7 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
                   </thead>
                   <tbody>
                     {invoice.line_items.map((item: any) => (
-                      <tr>
+                      <tr key={item.id}>
                         <td>{item.kind}</td>
                         <td>{item.description}</td>
                         <td className="text-right">{item.quantity}</td>
