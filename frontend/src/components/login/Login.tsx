@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Logo from "../../assets/logo.png";
-import { useNavigate, Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import { UserType } from '../../utils/types/UserType';
+import Button from '../button/Button';
+import Message from '../message/Message';
 
 interface LoginProps {
-  user: any;
+  user: UserType | null;
   setUser: (user: any) => void;
 }
 
@@ -52,14 +55,11 @@ const Login: React.FC<LoginProps> = ({ user, setUser }) => {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+    <div className="flex items-center justify-center min-h-screen">
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
         <img src={Logo} alt="Logo" className="w-40 mx-auto" />
-
         {error && (
-          <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-lg" role="alert">
-            <p>{error}</p>
-          </div>
+          <Message message={error} type="error" />
         )}
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
@@ -90,12 +90,7 @@ const Login: React.FC<LoginProps> = ({ user, setUser }) => {
               required
             />
           </div>
-          <button
-            type="submit"
-            className="w-full py-2 font-semibold text-white bg-blue-800 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            Login
-          </button>
+          <Button text="Login" type="submit" />
         </form>
       </div>
     </div>

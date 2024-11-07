@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
+import { isAdmin } from '../../utils/isAdmin';
+import { UserType } from '../../utils/types/UserType';
 
-const UserMenu: React.FC<{ user: { firstName: string; lastName: string }; onLogout: () => void }> = ({ user, onLogout }) => {
+interface UserMenuProps {
+  user: UserType;
+  onLogout: () => void;
+}
+
+const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -19,12 +26,15 @@ const UserMenu: React.FC<{ user: { firstName: string; lastName: string }; onLogo
           >
             Settings
           </a>
-          <a
-            href="/settings"
-            className="block w-full text-left px-4 py-2 text-sm text-gray-700 text-center hover:bg-blue-800 hover:text-white transition-colors"
-          >
-            Add User
-          </a>
+          {isAdmin(user) && (
+            <a
+              href="/users/add"
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 text-center hover:bg-blue-800 hover:text-white transition-colors"
+            >
+              Add User
+            </a>
+          )
+          }
           <button
             onClick={() => {
               setIsOpen(false);

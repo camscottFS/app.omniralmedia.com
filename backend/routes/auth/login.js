@@ -31,10 +31,13 @@ router.post('/login', async (req, res) => {
         email: user.email,
         firstName: user.firstName,
         lastName: user.lastName,
+        roleId: user.roleId,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
       },
     };
 
-    const token = jwt.sign(payload, 'jwt', { expiresIn: '1h' });
+    const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     res.json({ token, success: true });
   } catch (error) {

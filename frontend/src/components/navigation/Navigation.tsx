@@ -18,7 +18,7 @@ const Navigation: React.FC<NavigationProps> = ({ user, setUser }) => {
 
   return (
     <nav className="w-full bg-white shadow-lg" style={{ zIndex: 999 }}>
-      <div className="mx-auto w-full flex items-center justify-between p-4">
+      <div className="mx-auto w-full flex items-center justify-between py-4 max-w-screen-2xl px-8">
         <div className="flex items-center space-x-2">
           <a href="/">
             <img src={Logo} alt="Omniral Media - web design & development" className="h-6 w-auto" />
@@ -34,7 +34,7 @@ const Navigation: React.FC<NavigationProps> = ({ user, setUser }) => {
             </a>
           </div>
           <UserMenu
-            user={{ firstName: user?.firstName || '', lastName: user?.lastName || '' }}
+            user={user}
             onLogout={() => {
               sessionStorage.removeItem('token');
               setUser(null);

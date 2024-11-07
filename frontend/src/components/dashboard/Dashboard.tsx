@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
+import { UserType } from '../../utils/types/UserType';
 
 interface DashboardProps {
-  user: any;
+  user: UserType | null;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ user }) => {
@@ -13,12 +14,14 @@ const Dashboard: React.FC<DashboardProps> = ({ user }) => {
     if (!user) navigate('/');
   }, [user, navigate]);
 
+  if (!user) return null;
+
   return (
     <>
-      <div>{user?.username}</div>
-      <div>{user?.email}</div>
-      <div>{user?.firstName}</div>
-      <div>{user?.lastName}</div>
+      <div>{user.username}</div>
+      <div>{user.email}</div>
+      <div>{user.firstName}</div>
+      <div>{user.lastName}</div>
     </>
   )
 }
