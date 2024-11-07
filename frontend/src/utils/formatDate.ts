@@ -5,7 +5,6 @@ export const formatDate = (dateString: string, locale?: string): string => {
     throw new Error('Invalid date format');
   }
 
-  // Correct options with valid string literals
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'long',
