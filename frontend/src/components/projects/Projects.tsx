@@ -4,6 +4,8 @@ import Spinner from '../spinner/Spinner';
 import Message from '../message/Message';
 import { UserType } from '../../utils/types/UserType';
 import ProjectDetails from './ProjectDetails';
+import { formatDate } from '../../utils/formatDate';
+import { CalendarIcon } from '@heroicons/react/24/solid'
 
 interface ProjectsProps {
   user: UserType | null | undefined;
@@ -20,6 +22,8 @@ interface Project {
   };
   notes: string;
   hourly_rate: number | null;
+  starts_on: string;
+  ends_on: string;
 }
 
 const Projects: React.FC<ProjectsProps> = ({ user }) => {
@@ -103,6 +107,7 @@ const Projects: React.FC<ProjectsProps> = ({ user }) => {
                 </h2>
               </div>
               <div className="p-4 shadow-lg rounded-bl-lg rounded-br-lg">
+                <p className="flex mb-4"><CalendarIcon className="size-6 text-blue-800 mr-2" /> {formatDate(project.starts_on)} - {formatDate(project.ends_on)}</p>
                 {project.notes ? <p className="mb-4">{project.notes}</p> : null}
                 <ProjectDetails user={user} projectId={project.id} />
               </div>

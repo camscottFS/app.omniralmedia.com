@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import Spinner from '../spinner/Spinner';
 import Message from '../message/Message';
 import { UserType } from '../../utils/types/UserType';
+import BarLoading from '../loading/BarLoading';
 
 interface ProjectDetailsProps {
   user: UserType | null | undefined;
@@ -38,90 +38,6 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ user, projectId }) => {
   const [uninvoicedAmount, setUninvoicedAmount] = useState(0);
   const [taskSummaries, setTaskSummaries] = useState<TaskSummary[]>([]);
 
-  const fetchProjectDetails = async () => {
-    try {
-      let allTimeEntries: TimeEntry[] = [];
-      let page = 1;
-      const perPage = 100;
-      let totalPages = 1;
-
-      // Fetch time entries for the project
-      while (page <= totalPages) {
-        const response = await axios.get('https://api.harvestapp.com/v2/time_entries', {
-          headers: {
-            Authorization: `Bearer ${process.env.REACT_APP_HARVEST_ACCESS_TOKEN}`,
-            'Harvest-Account-ID': process.env.REACT_APP_HARVEST_ACCOUNT_ID,
-            'Content-Type': 'application/json',
-          },
-          params: {
-            project_id: projectId,
-            page: page,
-            per_page: perPage,
-          },
-        });
-
-        allTimeEntries = allTimeEntries.concat(response.data.time_entries);
-
-        const totalRecords = response.data.total_entries;
-        totalPages = Math.ceil(totalRecords / perPage);
-        page += 1;
-      }
-
-      // Aggregate the data
-      let totalHours = 0;
-      let billableHours = 0;
-      let nonBillableHours = 0;
-      let uninvoicedAmount = 0;
-      const taskMap: { [key: string]: TaskSummary } = {};
-
-      allTimeEntries.forEach((entry) => {
-        totalHours += entry.hours;
-        if (entry.billable) {
-          billableHours += entry.hours;
-          if (!entry.is_billed) {
-            const rate = entry.billable_rate || 0;
-            uninvoicedAmount += rate * entry.hours;
-          }
-        } else {
-          nonBillableHours += entry.hours;
-        }
-
-        const taskId = entry.task.id;
-        if (!taskMap[taskId]) {
-          taskMap[taskId] = {
-            taskId: entry.task.id,
-            taskName: entry.task.name,
-            hours: 0,
-            billableAmount: 0,
-            costs: 0, // If cost data is available
-          };
-        }
-
-        taskMap[taskId].hours += entry.hours;
-        if (entry.billable) {
-          const rate = entry.billable_rate || 0;
-          taskMap[taskId].billableAmount += rate * entry.hours;
-        }
-        // Include costs if available
-        // taskMap[taskId].costs += entry.cost_rate ? entry.cost_rate * entry.hours : 0;
-      });
-
-      const taskSummaries = Object.values(taskMap);
-
-      // Update state
-      setTotalHours(totalHours);
-      setBillableHours(billableHours);
-      setNonBillableHours(nonBillableHours);
-      setUninvoicedAmount(uninvoicedAmount);
-      setTaskSummaries(taskSummaries);
-      setLoading(false);
-    } catch (err) {
-      console.error('Error fetching project details:', err);
-      setError('Failed to fetch project details.');
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     if (user === undefined) return;
 
@@ -131,10 +47,94 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ user, projectId }) => {
       return;
     }
 
-    fetchProjectDetails();
-  }, [user]);
+    const fetchProjectDetails = async () => {
+      try {
+        let allTimeEntries: TimeEntry[] = [];
+        let page = 1;
+        const perPage = 100;
+        let totalPages = 1;
 
-  if (loading) return null;
+        // Fetch time entries for the project
+        while (page <= totalPages) {
+          const response = await axios.get('https://api.harvestapp.com/v2/time_entries', {
+            headers: {
+              Authorization: `Bearer ${process.env.REACT_APP_HARVEST_ACCESS_TOKEN}`,
+              'Harvest-Account-ID': process.env.REACT_APP_HARVEST_ACCOUNT_ID,
+              'Content-Type': 'application/json',
+            },
+            params: {
+              project_id: projectId,
+              page: page,
+              per_page: perPage,
+            },
+          });
+
+          allTimeEntries = allTimeEntries.concat(response.data.time_entries);
+
+          const totalRecords = response.data.total_entries;
+          totalPages = Math.ceil(totalRecords / perPage);
+          page += 1;
+        }
+
+        // Aggregate the data
+        let totalHours = 0;
+        let billableHours = 0;
+        let nonBillableHours = 0;
+        let uninvoicedAmount = 0;
+        const taskMap: { [key: string]: TaskSummary } = {};
+
+        allTimeEntries.forEach((entry) => {
+          totalHours += entry.hours;
+          if (entry.billable) {
+            billableHours += entry.hours;
+            if (!entry.is_billed) {
+              const rate = entry.billable_rate || 0;
+              uninvoicedAmount += rate * entry.hours;
+            }
+          } else {
+            nonBillableHours += entry.hours;
+          }
+
+          const taskId = entry.task.id;
+          if (!taskMap[taskId]) {
+            taskMap[taskId] = {
+              taskId: entry.task.id,
+              taskName: entry.task.name,
+              hours: 0,
+              billableAmount: 0,
+              costs: 0, // If cost data is available
+            };
+          }
+
+          taskMap[taskId].hours += entry.hours;
+          if (entry.billable) {
+            const rate = entry.billable_rate || 0;
+            taskMap[taskId].billableAmount += rate * entry.hours;
+          }
+          // Include costs if available
+          // taskMap[taskId].costs += entry.cost_rate ? entry.cost_rate * entry.hours : 0;
+        });
+
+        const taskSummaries = Object.values(taskMap);
+
+        // Update state
+        setTotalHours(totalHours);
+        setBillableHours(billableHours);
+        setNonBillableHours(nonBillableHours);
+        setUninvoicedAmount(uninvoicedAmount);
+        setTaskSummaries(taskSummaries);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching project details:', err);
+        setError('Failed to fetch project details.');
+        setLoading(false);
+      }
+    };
+
+    fetchProjectDetails();
+  }, [user, projectId]);
+
+  if (loading) return <BarLoading />;
 
   if (error) {
     return <Message message={error} type="error" />;
