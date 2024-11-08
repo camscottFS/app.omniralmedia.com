@@ -5,6 +5,7 @@ export interface UserType {
   firstName: string;
   lastName: string;
   roleId: number;
+  clientId: number;
   createdAt: string;
   updatedAt: string;
 }

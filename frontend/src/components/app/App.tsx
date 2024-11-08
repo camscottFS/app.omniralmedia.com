@@ -7,9 +7,10 @@ import Navigation from '../navigation/Navigation';
 import NotFound from '../notFound/NotFound';
 import Register from '../register/Register';
 import Invoices from '../invoices/Invoices';
+import { UserType } from '../../utils/types/UserType';
 
 const App: React.FC = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<UserType | null | undefined>(undefined);
 
   useEffect(() => {
     const token = sessionStorage.getItem('token');

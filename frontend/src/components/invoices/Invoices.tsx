@@ -1,4 +1,3 @@
-// InvoiceList.js (updated with pagination)
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Spinner from '../spinner/Spinner';
@@ -28,8 +27,8 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  const fetchAllInvoices = async () => {
-    let allInvoices = [] as any;
+  const fetchInvoicesByClientId = async (clientId: number) => {
+    let allInvoices: Invoice[] = [];
     let page = 1;
     const perPage = 100;
     let totalPages = 1;
@@ -38,11 +37,12 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
       while (page <= totalPages) {
         const response = await axios.get('https://api.harvestapp.com/v2/invoices', {
           headers: {
-            'Authorization': `Bearer ${process.env.REACT_APP_HARVEST_ACCESS_TOKEN}`,
+            Authorization: `Bearer ${process.env.REACT_APP_HARVEST_ACCESS_TOKEN}`,
             'Harvest-Account-ID': process.env.REACT_APP_HARVEST_ACCOUNT_ID,
             'Content-Type': 'application/json',
           },
           params: {
+            client_id: clientId,
             page: page,
             per_page: perPage,
           },
@@ -65,8 +65,17 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
   };
 
   useEffect(() => {
-    fetchAllInvoices();
-  }, []);
+    if (user === undefined) return;
+
+    if (!user || user.clientId === null || user.clientId === undefined) {
+      console.log(user);
+      setError('Client ID not found. Unable to fetch invoices.');
+      setLoading(false);
+      return;
+    }
+
+    fetchInvoicesByClientId(user.clientId);
+  }, [user]);
 
   if (loading) {
     return <Spinner />;
@@ -85,7 +94,7 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
         <div>
           {invoices.map((invoice) => (
             <div className="mb-4" key={invoice.id}>
-              <div className="border-lg bg-blue-800 text-white p-4 rounded-tl-lg rounded-tr-lg">
+              <div className="bg-blue-800 text-white p-4 rounded-tl-lg rounded-tr-lg">
                 Invoice #{invoice.number}
               </div>
               <div className="p-4 shadow-lg rounded-bl-lg rounded-br-lg">
@@ -97,24 +106,22 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
                         <td>{formatDate(invoice.sent_at)}</td>
                       </tr>
                       <tr>
-                        <td className="w-100 text-gray-800 font-bold" style={{ width: '100px' }}>Due Date</td>
+                        <td className="text-gray-800 font-bold" style={{ width: '100px' }}>Due Date</td>
                         <td>
                           <span>
                             {formatDate(invoice.due_date)}
-                            <small className="pl-1">
-                              (upon receipt)
-                            </small>
+                            <small className="pl-1">(upon receipt)</small>
                           </span>
                         </td>
                       </tr>
                       <tr>
-                        <td className="w-100 text-gray-800 font-bold" style={{ width: '100px' }}>Subject</td>
+                        <td className="text-gray-800 font-bold" style={{ width: '100px' }}>Subject</td>
                         <td>{invoice.subject ? invoice.subject : 'None'}</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
-                <table className="table-auto w-full">
+                <table className="table-fixed w-full">
                   <thead className="text-left">
                     <tr>
                       <th className="w-1/7 text-gray-800">Item Type</th>
@@ -137,18 +144,21 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
                   </tbody>
                 </table>
                 <div className="mt-4 pt-4 border-t-2">
-                  {
-                    invoice.state === 'open'
-                      ? (
-                        <div className="flex items-center justify-between">
-                          <span className="bg-red-700 text-white rounded-lg py-1 px-3">Unpaid</span>
-                          <a href={`https://${process.env.REACT_APP_HARVEST_COMPANY}.harvestapp.com/client/invoices/${invoice.client_key}`} className="py-2 px-4 font-semibold text-white bg-blue-800 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" target="_blank" rel="noreferrer">Pay now</a>
-                        </div>
-                      )
-                      : (
-                        <span className="bg-green-700 text-white rounded-lg py-1 px-3">Paid</span>
-                      )
-                  }
+                  {invoice.state === 'open' ? (
+                    <div className="flex items-center justify-between">
+                      <span className="bg-red-700 text-white rounded-lg py-1 px-3">Unpaid</span>
+                      <a
+                        href={`https://${process.env.REACT_APP_HARVEST_COMPANY}.harvestapp.com/client/invoices/${invoice.client_key}`}
+                        className="py-2 px-4 font-semibold text-white bg-blue-800 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Pay now
+                      </a>
+                    </div>
+                  ) : (
+                    <span className="bg-green-700 text-white rounded-lg py-1 px-3">Paid</span>
+                  )}
                 </div>
               </div>
             </div>

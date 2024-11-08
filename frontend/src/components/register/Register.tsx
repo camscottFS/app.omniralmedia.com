@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import Message from '../message/Message';
 
 interface RegisterProps {
-  user: UserType | null;
+  user: UserType | null | undefined;
 }
 
 const Register: React.FC<RegisterProps> = ({ user }) => {

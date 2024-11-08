@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserType } from '../../utils/types/UserType';
 
 interface DashboardProps {
-  user: UserType | null;
+  user: UserType | null | undefined;
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ user }) => {
