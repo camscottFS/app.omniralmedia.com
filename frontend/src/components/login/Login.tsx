@@ -9,7 +9,7 @@ import Message from '../message/Message';
 
 interface LoginProps {
   user: UserType | null | undefined;
-  setUser: (user: any) => void;
+  setUser: (user: UserType) => void;
 }
 
 const Login: React.FC<LoginProps> = ({ user, setUser }) => {
