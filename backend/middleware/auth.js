@@ -7,7 +7,7 @@ module.exports = function (req, res, next) {
 
   // Check if token is missing
   if (!token) {
-    return res.status(401).json({ message: 'No token provided, authorization denied' });
+    return res.status(401).json({ message: 'No token provided, authorization denied', success: false });
   }
 
   // Verify token
@@ -17,6 +17,6 @@ module.exports = function (req, res, next) {
     next();
   } catch (err) {
     console.error('Token verification failed:', err);
-    res.status(401).json({ message: 'Invalid token' });
+    res.status(401).json({ message: 'Invalid token', success: false });
   }
 };

@@ -11,7 +11,7 @@ router.post('/register', auth, checkRole(1), async (req, res) => {
   try {
     // Validate required fields
     if (!firstName || !lastName || !username || !email || !password || !roleId) {
-      return res.status(400).json({ message: 'Please provide all required fields' });
+      return res.status(400).json({ message: 'Please provide all required fields', success: false });
     }
 
     // Check if user already exists
@@ -21,7 +21,7 @@ router.post('/register', auth, checkRole(1), async (req, res) => {
     );
 
     if (existingUser.length > 0) {
-      return res.status(400).json({ message: 'User with this email or username already exists' });
+      return res.status(400).json({ message: 'User with this email or username already exists', success: false });
     }
 
     // Hash the password
@@ -36,7 +36,7 @@ router.post('/register', auth, checkRole(1), async (req, res) => {
       [firstName, lastName, username, email, hashedPassword, roleId, 1, date, date]
     );
 
-    res.status(201).json({ message: 'User registered successfully', userId: result.insertId });
+    res.status(201).json({ message: 'User registered successfully', userId: result.insertId, success: true });
   } catch (error) {
     console.error('Error registering user:', error);
     res.status(500).send('Server error');
