@@ -83,7 +83,7 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
           {invoices.map((invoice) => (
             <div className="mb-4" key={invoice.id}>
               <div className="bg-blue-800 text-white p-4 rounded-tl-lg rounded-tr-lg">
-                Invoice #{invoice.number}
+                <h2>Invoice #{invoice.number}</h2>
               </div>
               <div className="p-4 shadow-lg rounded-bl-lg rounded-br-lg">
                 <div className="mb-4">

@@ -6,6 +6,7 @@ import Dashboard from '../dashboard/Dashboard';
 import Navigation from '../navigation/Navigation';
 import NotFound from '../notFound/NotFound';
 import Register from '../register/Register';
+import Projects from '../projects/Projects';
 import Invoices from '../invoices/Invoices';
 import { UserType } from '../../utils/types/UserType';
 
@@ -30,6 +31,7 @@ const App: React.FC = () => {
           <Route path="/" element={<Login user={user} setUser={setUser} />} />
           <Route path="/dashboard" element={<Dashboard user={user} />} />
           <Route path="/users/add" element={<Register user={user} />} />
+          <Route path="/projects" element={<Projects user={user} />} />
           <Route path="/invoices" element={<Invoices user={user} />} />
         </Routes>
       </main>

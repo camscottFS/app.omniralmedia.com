@@ -26,8 +26,8 @@ const Navigation: React.FC<NavigationProps> = ({ user, setUser }) => {
         </div>
         <div className="flex items-center space-x-4">
           <div className="hidden md:flex space-x-6 mr-5">
-            <a href="#product" className="text-gray-700 hover:text-blue-900 transition-colors">
-              My Projects
+            <a href="/projects" className="text-gray-700 hover:text-blue-900 transition-colors">
+              Projects
             </a>
             <a href="/invoices" className="text-gray-700 hover:text-blue-900 transition-colors">
               Invoices
