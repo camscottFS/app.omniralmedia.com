@@ -75,7 +75,7 @@ const Register: React.FC<RegisterProps> = ({ user }) => {
 
   return (
     <div>
-      <h1 className="text-3xl mb-8">Add User</h1>
+      <h1 className="text-3xl text-blue-900 mb-8">Add User</h1>
       {error && <Message message={error} type="error" />}
       {success && <Message message={success} type="success" />}
       <form className="space-y-4" onSubmit={handleSubmit}>

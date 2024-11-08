@@ -18,7 +18,8 @@ interface Project {
     id: number;
     name: string;
   };
-  // Add other project properties as needed
+  notes: string;
+  hourly_rate: number | null;
 }
 
 const Projects: React.FC<ProjectsProps> = ({ user }) => {
@@ -86,7 +87,7 @@ const Projects: React.FC<ProjectsProps> = ({ user }) => {
 
   return (
     <div>
-      <h1 className="text-3xl mb-8">Projects</h1>
+      <h1 className="text-3xl text-blue-900 mb-8">Projects</h1>
       {projects.length === 0 ? (
         <p>No projects found.</p>
       ) : (
@@ -94,9 +95,15 @@ const Projects: React.FC<ProjectsProps> = ({ user }) => {
           {projects.map((project) => (
             <div key={project.id} className="mb-4">
               <div className="bg-blue-800 text-white p-4 rounded-tl-lg rounded-tr-lg">
-                <h2>[{project.code}] {project.name}</h2>
+                <h2>
+                  [{project.code}] {project.name}
+                  <span className="text-sm bg-white text-blue-800 rounded-lg px-2 py-1 ml-4">
+                    {project.hourly_rate ? 'Time & Materials' : 'Fixed Fee'}
+                  </span>
+                </h2>
               </div>
               <div className="p-4 shadow-lg rounded-bl-lg rounded-br-lg">
+                {project.notes ? <p className="mb-4">{project.notes}</p> : null}
                 <ProjectDetails user={user} projectId={project.id} />
               </div>
             </div>

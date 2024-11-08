@@ -142,32 +142,32 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ user, projectId }) => {
 
   return (
     <div>
-      <div className="mb-4">
-        <h2 className="text-xl font-bold">Total Hours</h2>
-        <p>{totalHours.toFixed(2)}</p>
+      <div className="grid grid-cols-4 gap-4 mb-8">
+        <div>
+          <h2 className="text-lg font-bold">Total Hours</h2>
+          <p>{totalHours.toFixed(2)}</p>
+        </div>
+        <div>
+          <h2 className="text-lg font-bold">Billable</h2>
+          <p>{billableHours.toFixed(2)}</p>
+        </div>
+        <div>
+          <h2 className="text-lg font-bold">Non-billable</h2>
+          <p>{nonBillableHours.toFixed(2)}</p>
+        </div>
+        <div>
+          <h2 className="text-lg font-bold">Uninvoiced Amount</h2>
+          <p>${uninvoicedAmount.toFixed(2)}</p>
+        </div>
       </div>
-      <div className="mb-4">
-        <h2 className="text-xl font-bold">Billable</h2>
-        <p>{billableHours.toFixed(2)}</p>
-      </div>
-      <div className="mb-4">
-        <h2 className="text-xl font-bold">Non-billable</h2>
-        <p>{nonBillableHours.toFixed(2)}</p>
-      </div>
-      <div className="mb-4">
-        <h2 className="text-xl font-bold">Uninvoiced Amount</h2>
-        <p>${uninvoicedAmount.toFixed(2)}</p>
-      </div>
-
       <div className="mb-8">
-        <h2 className="text-xl font-bold">Task Breakdown</h2>
         <table className="table-auto w-full">
           <thead className="text-left">
             <tr>
-              <th className="w-1/4">Task Name</th>
+              <th className="w-1/4">Billable Tasks</th>
               <th className="w-1/4">Hours</th>
-              <th className="w-1/4">Billable Amount</th>
-              <th className="w-1/4">Costs</th>
+              <th className="w-1/4 text-right">Billable Amount</th>
+              <th className="w-1/4 text-right">Costs</th>
             </tr>
           </thead>
           <tbody>
@@ -175,21 +175,21 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ user, projectId }) => {
               <tr key={task.taskId}>
                 <td>{task.taskName}</td>
                 <td>{task.hours.toFixed(2)}</td>
-                <td>${task.billableAmount.toFixed(2)}</td>
-                <td>${task.costs.toFixed(2)}</td>
+                <td className="text-right">${task.billableAmount.toFixed(2)}</td>
+                <td className="text-right">${task.costs.toFixed(2)}</td>
               </tr>
             ))}
             {/* Total Row */}
             <tr className="font-bold">
               <td>Total</td>
               <td>{totalHours.toFixed(2)}</td>
-              <td>
+              <td className="text-right">
                 $
                 {taskSummaries
                   .reduce((sum, t) => sum + t.billableAmount, 0)
                   .toFixed(2)}
               </td>
-              <td>
+              <td className="text-right">
                 $
                 {taskSummaries
                   .reduce((sum, t) => sum + t.costs, 0)

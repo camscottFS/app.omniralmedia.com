@@ -75,7 +75,7 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
 
   return (
     <div>
-      <h1 className="text-3xl mb-8">Invoices</h1>
+      <h1 className="text-3xl text-blue-900 mb-8">Invoices</h1>
       {invoices.length === 0 ? (
         <p>No invoices found.</p>
       ) : (
