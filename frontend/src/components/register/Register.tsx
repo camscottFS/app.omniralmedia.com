@@ -17,6 +17,7 @@ const Register: React.FC<RegisterProps> = ({ user }) => {
   const [emailInput, setEmailInput] = useState('');
   const [password, setPassword] = useState('');
   const [roleId, setRoleId] = useState('2');
+  const [clientId, setClientId] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -43,6 +44,7 @@ const Register: React.FC<RegisterProps> = ({ user }) => {
           email: emailInput,
           password,
           roleId: parseInt(roleId, 10),
+          clientId: parseInt(clientId, 10),
         },
         {
           headers: {
@@ -59,6 +61,7 @@ const Register: React.FC<RegisterProps> = ({ user }) => {
       setEmailInput('');
       setPassword('');
       setRoleId('2');
+      setClientId('');
     } catch (error: any) {
       if (error.response && error.response.data && error.response.data.message) {
         setError(error.response.data.message);
@@ -146,6 +149,22 @@ const Register: React.FC<RegisterProps> = ({ user }) => {
             <option value="1">Admin</option>
           </select>
         </div>
+        {roleId === '2' && (
+          <div>
+            <label htmlFor="clientId" className="block text-sm font-medium text-gray-700">
+              Client ID
+            </label>
+            <input
+              type="text"
+              id="clientId"
+              className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Enter client id"
+              value={lastName}
+              onChange={(e) => setClientId(e.target.value)}
+              required
+            />
+          </div>
+        )}
         <div>
           <label htmlFor="password" className="block text-sm font-medium text-gray-700">
             Password
