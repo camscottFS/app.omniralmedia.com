@@ -3,32 +3,20 @@ import axios from 'axios';
 import Spinner from '../spinner/Spinner';
 import Message from '../message/Message';
 import { formatDate } from '../../utils/formatDate';
+import { UserType } from '../../utils/types/UserType';
+import { InvoiceType } from '../../utils/types/InvoiceTypes';
 
 interface InvoicesProps {
-  user: any;
-}
-
-interface Invoice {
-  id: number;
-  number: string;
-  amount: number;
-  currency: string;
-  status: string;
-  state: string;
-  client_key: string;
-  line_items: any;
-  sent_at: string;
-  due_date: string;
-  subject: string;
+  user: UserType | null | undefined;
 }
 
 const Invoices: React.FC<InvoicesProps> = ({ user }) => {
-  const [invoices, setInvoices] = useState<Invoice[]>([]);
+  const [invoices, setInvoices] = useState<InvoiceType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const fetchInvoicesByClientId = async (clientId: number) => {
-    let allInvoices: Invoice[] = [];
+    let allInvoices: InvoiceType[] = [];
     let page = 1;
     const perPage = 100;
     let totalPages = 1;
