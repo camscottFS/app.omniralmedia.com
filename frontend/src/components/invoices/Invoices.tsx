@@ -1,7 +1,6 @@
 // InvoiceList.js (updated with pagination)
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Spin } from 'hamburger-react';
 import Spinner from '../spinner/Spinner';
 import Message from '../message/Message';
 import { formatDate } from '../../utils/formatDate';
@@ -143,7 +142,7 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
                       ? (
                         <div className="flex items-center justify-between">
                           <span className="bg-red-700 text-white rounded-lg py-1 px-3">Unpaid</span>
-                          <a href={`https://${process.env.REACT_APP_HARVEST_COMPANY}.harvestapp.com/client/invoices/${invoice.client_key}`} className="py-2 px-4 font-semibold text-white bg-blue-800 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" target="_blank">Pay now</a>
+                          <a href={`https://${process.env.REACT_APP_HARVEST_COMPANY}.harvestapp.com/client/invoices/${invoice.client_key}`} className="py-2 px-4 font-semibold text-white bg-blue-800 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2" target="_blank" rel="noreferrer">Pay now</a>
                         </div>
                       )
                       : (

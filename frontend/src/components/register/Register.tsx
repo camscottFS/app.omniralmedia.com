@@ -35,8 +35,7 @@ const Register: React.FC<RegisterProps> = ({ user }) => {
     try {
       const token = sessionStorage.getItem('token');
 
-      const response = await axios.post(
-        'http://localhost:3000/api/auth/register',
+      await axios.post(`${process.env.REACT_APP_API_HOST}/auth/register`,
         {
           firstName,
           lastName,
