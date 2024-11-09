@@ -24,6 +24,7 @@ interface Project {
   hourly_rate: number | null;
   starts_on: string;
   ends_on: string;
+  fee: number | null;
 }
 
 const Projects: React.FC<ProjectsProps> = ({ user }) => {
@@ -110,6 +111,7 @@ const Projects: React.FC<ProjectsProps> = ({ user }) => {
                 <p className="flex mb-4"><CalendarIcon className="size-6 text-blue-800 mr-2" /> {formatDate(project.starts_on)} - {formatDate(project.ends_on)}</p>
                 {project.notes ? <p className="mb-4">{project.notes}</p> : null}
                 <ProjectDetails user={user} projectId={project.id} />
+                {project.fee ? <><p className="font-bold">Fixed Cost</p><p>${project.fee.toFixed(2)}</p></> : null}
               </div>
             </div>
           ))}

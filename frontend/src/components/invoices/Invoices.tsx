@@ -125,8 +125,8 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
                         <td>{item.kind}</td>
                         <td>{item.description}</td>
                         <td className="text-right">{item.quantity}</td>
-                        <td className="text-right">${item.unit_price}</td>
-                        <td className="text-right">${item.amount}</td>
+                        <td className="text-right">${item.unit_price.toFixed(2)}</td>
+                        <td className="text-right">${item.amount.toFixed(2)}</td>
                       </tr>
                     ))}
                   </tbody>

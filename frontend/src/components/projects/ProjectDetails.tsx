@@ -144,19 +144,19 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ user, projectId }) => {
     <div>
       <div className="grid grid-cols-4 gap-4 mb-8">
         <div>
-          <h2 className="text-lg font-bold">Total Hours</h2>
+          <h2 className="text-md font-bold">Total Hours</h2>
           <p>{totalHours.toFixed(2)}</p>
         </div>
         <div>
-          <h2 className="text-lg font-bold">Billable</h2>
+          <h2 className="text-md font-bold">Billable</h2>
           <p>{billableHours.toFixed(2)}</p>
         </div>
         <div>
-          <h2 className="text-lg font-bold">Non-billable</h2>
+          <h2 className="text-md font-bold">Non-billable</h2>
           <p>{nonBillableHours.toFixed(2)}</p>
         </div>
         <div>
-          <h2 className="text-lg font-bold">Uninvoiced Amount</h2>
+          <h2 className="text-md font-bold">Uninvoiced Amount</h2>
           <p>${uninvoicedAmount.toFixed(2)}</p>
         </div>
       </div>
