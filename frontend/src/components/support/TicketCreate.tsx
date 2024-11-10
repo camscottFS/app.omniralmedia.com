@@ -1,21 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import { UserType } from '../../utils/types/UserType';
+import { useNavigate, useParams } from 'react-router-dom';
+import NotFound from '../notFound/NotFound';
+import { ProjectType } from '../../utils/types/ProjectType';
 import Spinner from '../spinner/Spinner';
 import Message from '../message/Message';
-import { UserType } from '../../utils/types/UserType';
-import ProjectDetails from './ProjectDetails';
-import { formatDate } from '../../utils/formatDate';
-import { CalendarIcon } from '@heroicons/react/24/solid'
-import { ProjectType } from '../../utils/types/ProjectType';
+import axios from 'axios';
+import Button from '../button/Button';
+import GeneralSupportForm from './GeneralSupportForm';
+import EmergencySupportForm from './EmergencySupportForm';
+import FeatureSupportForm from './FeatureSupportForm';
 
-interface ProjectsProps {
+interface TicketCreateProps {
   user: UserType | null | undefined;
 }
 
-const Projects: React.FC<ProjectsProps> = ({ user }) => {
+const TicketCreate: React.FC<TicketCreateProps> = ({ user }) => {
   const [projects, setProjects] = useState<ProjectType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const type = useParams().type;
+  const navigate = useNavigate();
 
   const fetchProjectsByClientId = async (clientId: number) => {
     let allProjects: ProjectType[] = [];
@@ -67,6 +73,8 @@ const Projects: React.FC<ProjectsProps> = ({ user }) => {
     fetchProjectsByClientId(user.clientId);
   }, [user]);
 
+  const handleSubmit = () => { return null };
+
   if (loading) {
     return <Spinner />;
   }
@@ -75,35 +83,36 @@ const Projects: React.FC<ProjectsProps> = ({ user }) => {
     return <Message message={error} type="error" />;
   }
 
+  if (type !== 'general' && type !== 'emergency' && type !== 'feature') return <NotFound />;
+
   return (
     <div>
-      <h1 className="text-3xl text-blue-900 mb-8">Projects</h1>
-      {projects.length === 0 ? (
-        <p>No projects found.</p>
-      ) : (
-        <div>
-          {projects.map((project) => (
-            <div key={project.id} className="mb-4">
-              <div className="bg-blue-800 text-white p-4 rounded-tl-lg rounded-tr-lg">
-                <h2>
-                  [{project.code}] {project.name}
-                  <span className="text-sm bg-white text-blue-800 rounded-lg px-2 py-1 ml-4">
-                    {project.hourly_rate ? 'Time & Materials' : 'Fixed Fee'}
-                  </span>
-                </h2>
-              </div>
-              <div className="p-4 shadow-lg rounded-bl-lg rounded-br-lg">
-                <p className="flex mb-4"><CalendarIcon className="size-6 text-blue-800 mr-2" /> {formatDate(project.starts_on)} - {formatDate(project.ends_on)}</p>
-                {project.notes ? <p className="mb-4">{project.notes}</p> : null}
-                <ProjectDetails user={user} projectId={project.id} />
-                {project.fee ? <><p className="font-bold">Fixed Cost</p><p>${project.fee.toFixed(2)}</p></> : null}
-              </div>
-            </div>
-          ))}
-        </div>
+      {type === 'general' && (
+        <>
+          <h1 className="text-3xl text-blue-900 mb-8">Open general support ticket</h1>
+          <div className="lg:w-1/2 md:w-full">
+            <GeneralSupportForm projects={projects} />
+          </div>
+        </>
+      )}
+      {type === 'emergency' && (
+        <>
+          <h1 className="text-3xl text-blue-900 mb-8">Open emergency support ticket</h1>
+          <div className="lg:w-1/2 md:w-full">
+            <EmergencySupportForm projects={projects} />
+          </div>
+        </>
+      )}
+      {type === 'feature' && (
+        <>
+          <h1 className="text-3xl text-blue-900 mb-8">Open feature request ticket</h1>
+          <div className="lg:w-1/2 md:w-full">
+            <FeatureSupportForm projects={projects} />
+          </div>
+        </>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default Projects;
+export default TicketCreate;
