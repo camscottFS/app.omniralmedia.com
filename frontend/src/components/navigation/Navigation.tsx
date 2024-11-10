@@ -32,6 +32,9 @@ const Navigation: React.FC<NavigationProps> = ({ user, setUser }) => {
             <a href="/invoices" className="text-gray-700 hover:text-blue-900 transition-colors">
               Invoices
             </a>
+            <a href="/tickets" className="text-gray-700 hover:text-blue-900 transition-colors">
+              Tickets
+            </a>
           </div>
           <UserMenu
             user={user}
