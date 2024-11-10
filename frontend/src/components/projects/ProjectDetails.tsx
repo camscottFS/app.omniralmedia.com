@@ -3,6 +3,10 @@ import axios from 'axios';
 import Message from '../message/Message';
 import { UserType } from '../../utils/types/UserType';
 import BarLoading from '../loading/BarLoading';
+import ProjectProgressChart from './ProjectProgressChart';
+import HoursPerWeekChart from './HoursPerWeekChart';
+import { getWeekNumber } from '../../utils/getWeekNumber';
+import { ChartBarIcon, ClockIcon } from '@heroicons/react/24/solid';
 
 interface ProjectDetailsProps {
   user: UserType | null | undefined;
@@ -37,6 +41,9 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ user, projectId }) => {
   const [nonBillableHours, setNonBillableHours] = useState(0);
   const [uninvoicedAmount, setUninvoicedAmount] = useState(0);
   const [taskSummaries, setTaskSummaries] = useState<TaskSummary[]>([]);
+  const [progressData, setProgressData] = useState<{ date: string; hours: number }[]>([]);
+  const [weeklyData, setWeeklyData] = useState<{ week: string; hours: number }[]>([]);
+  const [chartSelection, setChartSelection] = useState('progress');
 
   useEffect(() => {
     if (user === undefined) return;
@@ -82,8 +89,10 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ user, projectId }) => {
         let nonBillableHours = 0;
         let uninvoicedAmount = 0;
         const taskMap: { [key: string]: TaskSummary } = {};
+        const progressMap: { [date: string]: number } = {};
+        const weeklyMap: { [week: string]: number } = {};
 
-        allTimeEntries.forEach((entry) => {
+        allTimeEntries.forEach((entry: any) => {
           totalHours += entry.hours;
           if (entry.billable) {
             billableHours += entry.hours;
@@ -111,11 +120,19 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ user, projectId }) => {
             const rate = entry.billable_rate || 0;
             taskMap[taskId].billableAmount += rate * entry.hours;
           }
-          // Include costs if available
-          // taskMap[taskId].costs += entry.cost_rate ? entry.cost_rate * entry.hours : 0;
+
+          // Update progress data
+          const date = entry.created_at.split('T')[0]; // Extract the date
+          progressMap[date] = (progressMap[date] || 0) + entry.hours;
+
+          // Update weekly data
+          const week = `Week ${getWeekNumber(new Date(entry.created_at))}`;
+          weeklyMap[week] = (weeklyMap[week] || 0) + entry.hours;
         });
 
         const taskSummaries = Object.values(taskMap);
+        const progressData = Object.entries(progressMap).map(([date, hours]) => ({ date, hours }));
+        const weeklyData = Object.entries(weeklyMap).map(([week, hours]) => ({ week, hours }));
 
         // Update state
         setTotalHours(totalHours);
@@ -123,6 +140,8 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ user, projectId }) => {
         setNonBillableHours(nonBillableHours);
         setUninvoicedAmount(uninvoicedAmount);
         setTaskSummaries(taskSummaries);
+        setProgressData(progressData);
+        setWeeklyData(weeklyData);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching project details:', err);
@@ -161,43 +180,70 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ user, projectId }) => {
         </div>
       </div>
       <div className="mb-8">
-        <table className="table-auto w-full">
-          <thead className="text-left">
-            <tr>
-              <th className="w-1/4">Billable Tasks</th>
-              <th className="w-1/4">Hours</th>
-              <th className="w-1/4 text-right">Billable Amount</th>
-              <th className="w-1/4 text-right">Costs</th>
-            </tr>
-          </thead>
-          <tbody>
-            {taskSummaries.map((task) => (
-              <tr key={task.taskId}>
-                <td>{task.taskName}</td>
-                <td>{task.hours.toFixed(2)}</td>
-                <td className="text-right">${task.billableAmount.toFixed(2)}</td>
-                <td className="text-right">${task.costs.toFixed(2)}</td>
+        <div className="flex border rounded-md overflow-hidden w-max mb-4">
+          <button
+            className={`flex items-center px-4 py-2 border-r text-sm font-medium ${chartSelection === 'progress'
+              ? 'bg-blue-50 text-black'
+              : 'bg-white text-gray-500 border-gray-300 hover:bg-gray-100'
+              }`}
+            onClick={() => setChartSelection('progress')}
+          >
+            <span className="mr-2"><ChartBarIcon className="h-4 text-blue-800" /></span> Project progress
+          </button>
+          <button
+            className={`flex items-center px-4 py-2 text-sm font-medium ${chartSelection === 'hours'
+              ? 'bg-blue-50 text-black'
+              : 'bg-white text-gray-500 border-gray-300 hover:bg-gray-100'
+              }`}
+            onClick={() => setChartSelection('hours')}
+          >
+            <span className="mr-2"><ClockIcon className="h-4 text-blue-800" /></span> Hours per week
+          </button>
+        </div>
+        {chartSelection === 'progress' ? (
+          <ProjectProgressChart progressData={progressData} />
+        ) : (
+          <HoursPerWeekChart weeklyData={weeklyData} />
+        )}
+        <div className="mt-8">
+          <table className="table-auto w-full">
+            <thead className="text-left">
+              <tr>
+                <th className="w-1/4">Billable Tasks</th>
+                <th className="w-1/4">Hours</th>
+                <th className="w-1/4 text-right">Billable Amount</th>
+                <th className="w-1/4 text-right">Costs</th>
               </tr>
-            ))}
-            {/* Total Row */}
-            <tr className="font-bold">
-              <td>Total</td>
-              <td>{totalHours.toFixed(2)}</td>
-              <td className="text-right">
-                $
-                {taskSummaries
-                  .reduce((sum, t) => sum + t.billableAmount, 0)
-                  .toFixed(2)}
-              </td>
-              <td className="text-right">
-                $
-                {taskSummaries
-                  .reduce((sum, t) => sum + t.costs, 0)
-                  .toFixed(2)}
-              </td>
-            </tr>
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {taskSummaries.map((task) => (
+                <tr key={task.taskId}>
+                  <td>{task.taskName}</td>
+                  <td>{task.hours.toFixed(2)}</td>
+                  <td className="text-right">${task.billableAmount.toFixed(2)}</td>
+                  <td className="text-right">${task.costs.toFixed(2)}</td>
+                </tr>
+              ))}
+              {/* Total Row */}
+              <tr className="font-bold">
+                <td>Total</td>
+                <td>{totalHours.toFixed(2)}</td>
+                <td className="text-right">
+                  $
+                  {taskSummaries
+                    .reduce((sum, t) => sum + t.billableAmount, 0)
+                    .toFixed(2)}
+                </td>
+                <td className="text-right">
+                  $
+                  {taskSummaries
+                    .reduce((sum, t) => sum + t.costs, 0)
+                    .toFixed(2)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
