@@ -9,6 +9,7 @@ import Register from '../register/Register';
 import Projects from '../projects/Projects';
 import Invoices from '../invoices/Invoices';
 import { UserType } from '../../utils/types/UserType';
+import Support from '../support/Support';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<UserType | null | undefined>(undefined);
@@ -33,6 +34,7 @@ const App: React.FC = () => {
           <Route path="/users/add" element={<Register user={user} />} />
           <Route path="/projects" element={<Projects user={user} />} />
           <Route path="/invoices" element={<Invoices user={user} />} />
+          <Route path="/support" element={<Support user={user} />} />
         </Routes>
       </main>
     </Router>
