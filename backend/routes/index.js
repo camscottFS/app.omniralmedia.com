@@ -15,11 +15,17 @@ module.exports = (app) => {
       } else if (file.endsWith('.js') && file !== 'index.js') {
         // Require the route file
         const route = require(fullPath);
-        // Mount the route
-        if (typeof route === 'function' || typeof route === 'object') {
-          // Use the route's relative path from the routes directory
+
+        if (typeof route === 'function' || typeof route === 'object' && typeof route.router === 'function') {
+          // Construct route path based on directory structure
           const routePath = '/' + path.relative(__dirname, path.dirname(fullPath)).replace(/\\/g, '/');
-          app.use('/api' + routePath, route);
+
+          // Use router if route exports a middleware function
+          if (typeof route === 'function') {
+            app.use('/api' + routePath, route);
+          } else if (typeof route.router === 'function') {
+            app.use('/api' + routePath, route.router);
+          }
         }
       }
     });

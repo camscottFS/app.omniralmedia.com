@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { UserType } from '../../utils/types/UserType';
+import TicketHistory from './TicketHistory';
 
 interface SupportProps {
   user: UserType | null | undefined;
@@ -46,7 +47,8 @@ const Support: React.FC<SupportProps> = ({ user }) => {
           <a href="/support/ticket/create/feature" className="py-2 px-4 font-semibold text-white bg-blue-800 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Open feature request ticket</a>
         </div>
       </div>
-      <h1 className="text-2xl text-blue-900 mb-8">Ticket History</h1>
+      <h2 className="text-2xl text-blue-900 mb-8">Ticket History</h2>
+      <TicketHistory userId={user?.id} />
     </div>
   )
 }
