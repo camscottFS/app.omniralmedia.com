@@ -55,7 +55,7 @@ const Login: React.FC<LoginProps> = ({ user, setUser }) => {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen">
+    <div className="flex items-center justify-center" style={{ height: '80vh' }}>
       <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
         <img src={Logo} alt="Logo" className="w-40 mx-auto" />
         {error && (
@@ -90,7 +90,7 @@ const Login: React.FC<LoginProps> = ({ user, setUser }) => {
               required
             />
           </div>
-          <Button text="Login" type="submit" />
+          <Button text="Login" type="submit" fullWidth={true} />
         </form>
       </div>
     </div>

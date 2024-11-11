@@ -2,22 +2,14 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Message from '../message/Message';
 import BarLoading from '../loading/BarLoading'
-
-interface Ticket {
-  id: number;
-  subject: string;
-  description: string;
-  status: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { TicketType } from '../../utils/types/TicketType';
 
 interface TicketHistoryProps {
   userId: number | undefined;
 }
 
 const TicketHistory: React.FC<TicketHistoryProps> = ({ userId }) => {
-  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [tickets, setTickets] = useState<TicketType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 

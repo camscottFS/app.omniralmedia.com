@@ -1,6 +1,7 @@
 import React from 'react'
 import Button from '../button/Button'
 import { ProjectType } from '../../utils/types/ProjectType';
+import AnchorLink from '../anchorLink/AnchorLink';
 
 interface FeatureSupportFormProps {
   projects: any;
@@ -11,6 +12,7 @@ const FeatureSupportForm: React.FC<FeatureSupportFormProps> = ({ projects }) => 
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
+      <AnchorLink to="/support" text="Go back" />
       <div>
         <label htmlFor="project" className="block text-sm font-medium text-gray-700">
           Project

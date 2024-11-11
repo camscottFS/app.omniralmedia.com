@@ -3,6 +3,7 @@ import { Spin as Hamburger } from 'hamburger-react';
 import Logo from "../../assets/logo.png";
 import UserMenu from "../userMenu/UserMenu";
 import { useNavigate } from "react-router-dom";
+import AnchorLink from "../anchorLink/AnchorLink";
 
 interface NavigationProps {
   user: any;
@@ -26,15 +27,9 @@ const Navigation: React.FC<NavigationProps> = ({ user, setUser }) => {
         </div>
         <div className="flex items-center space-x-4">
           <div className="hidden md:flex space-x-6 mr-5">
-            <a href="/projects" className="text-gray-700 hover:text-blue-900 transition-colors">
-              Projects
-            </a>
-            <a href="/invoices" className="text-gray-700 hover:text-blue-900 transition-colors">
-              Invoices
-            </a>
-            <a href="/support" className="text-gray-700 hover:text-blue-900 transition-colors">
-              Support
-            </a>
+            <AnchorLink to="/projects" text="Projects" />
+            <AnchorLink to="/invoices" text="Invoices" />
+            <AnchorLink to="/support" text="Support" />
           </div>
           <UserMenu
             user={user}

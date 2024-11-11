@@ -10,6 +10,8 @@ import Button from '../button/Button';
 import GeneralSupportForm from './GeneralSupportForm';
 import EmergencySupportForm from './EmergencySupportForm';
 import FeatureSupportForm from './FeatureSupportForm';
+import AnchorLink from '../anchorLink/AnchorLink';
+import { ArrowTurnDownLeftIcon } from '@heroicons/react/24/solid';
 
 interface TicketCreateProps {
   user: UserType | null | undefined;
@@ -87,6 +89,9 @@ const TicketCreate: React.FC<TicketCreateProps> = ({ user }) => {
 
   return (
     <div>
+      <div className="mb-4">
+        <AnchorLink to="/support" text="Go back" icon={<ArrowTurnDownLeftIcon className="h-5 w-5" />} />
+      </div>
       {type === 'general' && (
         <>
           <h1 className="text-3xl text-blue-900 mb-8">Open general support ticket</h1>
