@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 import Login from '../login/Login';
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 import Dashboard from '../dashboard/Dashboard';
 import Navigation from '../navigation/Navigation';
 import NotFound from '../notFound/NotFound';
@@ -18,10 +18,29 @@ const App: React.FC = () => {
 
   useEffect(() => {
     const token = sessionStorage.getItem('token');
+
     if (token) {
-      const decodedToken = jwtDecode(token);
-      // @ts-ignore
-      setUser(decodedToken.user);
+      try {
+        const decodedToken = jwtDecode<JwtPayload & { user: UserType }>(token);
+
+        // Check if token is expired
+        if (decodedToken.exp && decodedToken.exp * 1000 < Date.now()) {
+          // Token is expired, log out
+          sessionStorage.removeItem('token');
+          setUser(undefined);
+          window.location.href = '/';
+        } else {
+          // Token is valid, set user
+          setUser(decodedToken.user);
+        }
+      } catch (err) {
+        console.error('Invalid token:', err);
+        sessionStorage.removeItem('token');
+        setUser(undefined);
+        window.location.href = '/';
+      }
+    } else {
+      setUser(null);
     }
   }, []);
 
