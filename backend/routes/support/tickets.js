@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../../config/db');
 const auth = require('../../middleware/auth');
 
-router.get('/tickets/:userId', auth, async (req, res) => {
+router.get('/ticket/:userId', auth, async (req, res) => {
   const { userId } = req.params;
 
   if (!userId) {
@@ -25,7 +25,7 @@ router.get('/tickets/:userId', auth, async (req, res) => {
   }
 });
 
-router.get('/ticket/:ticketId', auth, async (req, res) => {
+router.get('/tickets/:ticketId', auth, async (req, res) => {
   const { ticketId } = req.params;
 
   if (!ticketId) {
@@ -56,7 +56,7 @@ router.get('/ticket/:ticketId', auth, async (req, res) => {
       FROM supportTicketComments c
       INNER JOIN users u ON c.userId = u.id
       WHERE c.ticketId = ? 
-      ORDER BY c.createdAt ASC`,
+      ORDER BY c.createdAt DESC`,
       [ticketId]
     );
 

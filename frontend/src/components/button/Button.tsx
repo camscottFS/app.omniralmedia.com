@@ -4,6 +4,7 @@ interface ButtonProps {
   type?: 'button' | 'submit' | 'reset';
   text: string;
   fullWidth?: boolean;
+  disabled?: boolean;
 }
 
 const Button: React.FC<ButtonProps> = ({ text, type, fullWidth }) => {

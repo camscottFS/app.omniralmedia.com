@@ -29,7 +29,7 @@ const Ticket: React.FC<TicketProps> = ({ user }) => {
     try {
       const token = sessionStorage.getItem('token');
       const response = await axios.get(
-        `${process.env.REACT_APP_API_HOST}/support/ticket/${ticketId}`,
+        `${process.env.REACT_APP_API_HOST}/support/tickets/${ticketId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -61,12 +61,14 @@ const Ticket: React.FC<TicketProps> = ({ user }) => {
     return <BarLoading />;
   }
 
+  if (!user) return null;
+
   return (
     <div>
       <div className="lg:w-1/2 md:w-full">
         <AnchorLink to="/support" text="Go back" icon={<ArrowTurnDownLeftIcon className="h-5 w-5" />} />
         <h1 className="text-3xl text-blue-900 mb-8 mt-4">{ticket.subject}</h1>
-        <TicketCommentForm />
+        <TicketCommentForm userId={user.id} ticketId={ticket.id} onCommentAdded={() => { }} />
         <div className="max-w-4xl mx-auto">
           {ticket?.messages?.map((message: TicketMessageType) => (
             <div
