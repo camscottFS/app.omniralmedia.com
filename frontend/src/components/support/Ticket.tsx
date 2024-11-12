@@ -68,7 +68,16 @@ const Ticket: React.FC<TicketProps> = ({ user }) => {
       <div className="lg:w-1/2 md:w-full">
         <AnchorLink to="/support" text="Go back" icon={<ArrowTurnDownLeftIcon className="h-5 w-5" />} />
         <h1 className="text-3xl text-blue-900 mb-8 mt-4">{ticket.subject}</h1>
-        <TicketCommentForm userId={user.id} ticketId={ticket.id} onCommentAdded={() => { }} />
+        {ticket.status === 'open'
+          ? (
+            <TicketCommentForm userId={user.id} ticketId={ticket.id} onCommentAdded={() => { }} />
+          ) : (
+            <div className="mb-6 p-4 rounded-lg shadow-md bg-orange-300">
+              <p className="font-semibold">This ticket has been marked as resolved.</p>
+              <p>Please create a new ticket if you need further assistance.</p>
+            </div>
+          )
+        }
         <div className="max-w-4xl mx-auto">
           {ticket?.messages?.map((message: TicketMessageType) => (
             <div
