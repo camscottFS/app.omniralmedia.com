@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../../config/db');
 const auth = require('../../middleware/auth');
 
-router.get('/ticket/:userId', auth, async (req, res) => {
+router.get('/ticket/user/:userId', auth, async (req, res) => {
   const { userId } = req.params;
 
   if (!userId) {
