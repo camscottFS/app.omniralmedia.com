@@ -5,6 +5,7 @@ import { isAdmin } from '../../utils/isAdmin';
 import Button from '../button/Button';
 import { useNavigate } from 'react-router-dom';
 import Message from '../message/Message';
+import { verifyUser } from '../../utils/verifyUser';
 
 interface RegisterProps {
   user: UserType | null | undefined;
@@ -24,6 +25,13 @@ const Register: React.FC<RegisterProps> = ({ user }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    const token = sessionStorage.getItem('token');
+    const decodedToken = verifyUser(token);
+
+    if (!decodedToken) {
+      sessionStorage.removeItem('token');
+      navigate('/');
+    }
     document.title = 'Omniral Media - Add User';
     if (user && !isAdmin(user)) navigate('/')
   }, [user, navigate]);

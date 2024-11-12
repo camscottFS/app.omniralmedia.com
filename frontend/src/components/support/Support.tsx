@@ -1,13 +1,25 @@
 import React, { useEffect } from 'react';
 import { UserType } from '../../utils/types/UserType';
 import TicketHistory from './TicketHistory';
+import { useNavigate } from 'react-router-dom';
+import { verifyUser } from '../../utils/verifyUser';
 
 interface SupportProps {
   user: UserType | null | undefined;
 }
 
 const Support: React.FC<SupportProps> = ({ user }) => {
+  const navigate = useNavigate();
+
   useEffect(() => {
+    const token = sessionStorage.getItem('token');
+    const decodedToken = verifyUser(token);
+
+    if (!decodedToken) {
+      sessionStorage.removeItem('token');
+      navigate('/');
+    }
+
     document.title = `${process.env.REACT_APP_COMPANY} -  Client Support`;
   }, [user]);
 

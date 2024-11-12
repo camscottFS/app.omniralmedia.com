@@ -7,6 +7,8 @@ import ProjectDetails from './ProjectDetails';
 import { formatDate } from '../../utils/formatDate';
 import { CalendarIcon } from '@heroicons/react/24/solid'
 import { ProjectType } from '../../utils/types/ProjectType';
+import { verifyUser } from '../../utils/verifyUser';
+import { useNavigate } from 'react-router-dom';
 
 interface ProjectsProps {
   user: UserType | null | undefined;
@@ -16,6 +18,8 @@ const Projects: React.FC<ProjectsProps> = ({ user }) => {
   const [projects, setProjects] = useState<ProjectType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const navigate = useNavigate();
 
   const fetchProjectsByClientId = async (clientId: number) => {
     let allProjects: ProjectType[] = [];
@@ -55,7 +59,13 @@ const Projects: React.FC<ProjectsProps> = ({ user }) => {
   };
 
   useEffect(() => {
-    if (user === undefined) return;
+    const token = sessionStorage.getItem('token');
+    const decodedToken = verifyUser(token);
+
+    if (!decodedToken) {
+      sessionStorage.removeItem('token');
+      navigate('/');
+    }
 
     if (!user || user.clientId === null || user.clientId === undefined) {
       console.log(user);

@@ -5,6 +5,8 @@ import Message from '../message/Message';
 import { formatDate } from '../../utils/formatDate';
 import { UserType } from '../../utils/types/UserType';
 import { InvoiceType } from '../../utils/types/InvoiceTypes';
+import { verifyUser } from '../../utils/verifyUser';
+import { useNavigate } from 'react-router-dom';
 
 interface InvoicesProps {
   user: UserType | null | undefined;
@@ -14,6 +16,8 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
   const [invoices, setInvoices] = useState<InvoiceType[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const navigate = useNavigate();
 
   const fetchInvoicesByClientId = async (clientId: number) => {
     let allInvoices: InvoiceType[] = [];
@@ -53,7 +57,13 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
   };
 
   useEffect(() => {
-    if (user === undefined) return;
+    const token = sessionStorage.getItem('token');
+    const decodedToken = verifyUser(token);
+
+    if (!decodedToken) {
+      sessionStorage.removeItem('token');
+      navigate('/');
+    }
 
     if (!user || user.clientId === null || user.clientId === undefined) {
       console.log(user);

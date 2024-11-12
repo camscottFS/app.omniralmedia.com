@@ -12,6 +12,7 @@ import EmergencySupportForm from './EmergencySupportForm';
 import FeatureSupportForm from './FeatureSupportForm';
 import AnchorLink from '../anchorLink/AnchorLink';
 import { ArrowTurnDownLeftIcon } from '@heroicons/react/24/solid';
+import { verifyUser } from '../../utils/verifyUser';
 
 interface TicketCreateProps {
   user: UserType | null | undefined;
@@ -63,7 +64,13 @@ const TicketCreate: React.FC<TicketCreateProps> = ({ user }) => {
   };
 
   useEffect(() => {
-    if (user === undefined) return;
+    const token = sessionStorage.getItem('token');
+    const decodedToken = verifyUser(token);
+
+    if (!decodedToken) {
+      sessionStorage.removeItem('token');
+      navigate('/');
+    }
 
     if (!user || user.clientId === null || user.clientId === undefined) {
       console.log(user);

@@ -3,12 +3,13 @@ import { UserType } from '../../utils/types/UserType';
 import BarLoading from '../loading/BarLoading';
 import axios from 'axios';
 import { TicketType } from '../../utils/types/TicketType';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import TicketCommentForm from './TicketCommentForm';
 import AnchorLink from '../anchorLink/AnchorLink';
 import { ArrowTurnDownLeftIcon } from '@heroicons/react/24/solid';
 import { TicketMessageType } from '../../utils/types/TicketMessageType';
 import { formatDate } from '../../utils/formatDate';
+import { verifyUser } from '../../utils/verifyUser';
 
 interface TicketProps {
   user: UserType | null | undefined;
@@ -18,6 +19,8 @@ const Ticket: React.FC<TicketProps> = ({ user }) => {
   const [ticket, setTicket] = useState<TicketType>({} as TicketType);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  const navigate = useNavigate();
 
   const ticketId = useParams().ticketId;
 
@@ -34,6 +37,7 @@ const Ticket: React.FC<TicketProps> = ({ user }) => {
         }
       );
       setTicket(response.data.ticket);
+      document.title = `Omniral Media - Client Support - ${response.data.ticket.subject}`;
       setLoading(false);
     } catch (err) {
       console.error('Error fetching tickets:', err);
@@ -43,6 +47,13 @@ const Ticket: React.FC<TicketProps> = ({ user }) => {
   };
 
   useEffect(() => {
+    const token = sessionStorage.getItem('token');
+    const decodedToken = verifyUser(token);
+
+    if (!decodedToken) {
+      sessionStorage.removeItem('token');
+      navigate('/');
+    }
     fetchTicket();
   }, [user]);
 

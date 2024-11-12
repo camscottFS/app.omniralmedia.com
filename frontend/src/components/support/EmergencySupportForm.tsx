@@ -1,13 +1,27 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Button from '../button/Button'
 import { ProjectType } from '../../utils/types/ProjectType';
+import { useNavigate } from 'react-router-dom';
+import { verifyUser } from '../../utils/verifyUser';
 
 interface EmergencySupportFormProps {
   projects: any;
 }
 
 const EmergencySupportForm: React.FC<EmergencySupportFormProps> = ({ projects }) => {
+  const navigate = useNavigate();
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => { return null }
+
+  useEffect(() => {
+    const token = sessionStorage.getItem('token');
+    const decodedToken = verifyUser(token);
+
+    if (!decodedToken) {
+      sessionStorage.removeItem('token');
+      navigate('/');
+    }
+  }, [projects]);
 
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
