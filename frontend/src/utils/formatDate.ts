@@ -1,4 +1,8 @@
-export const formatDate = (dateString: string, locale?: string): string => {
+export const formatDate = (
+  dateString: string,
+  locale?: string,
+  hours?: boolean
+): string => {
   const date = new Date(dateString);
 
   if (isNaN(date.getTime())) {
@@ -9,7 +13,8 @@ export const formatDate = (dateString: string, locale?: string): string => {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
+    ...(hours && { hour: 'numeric', minute: 'numeric', hour12: true }),
   };
 
   return date.toLocaleDateString(locale, options);
-}
+};

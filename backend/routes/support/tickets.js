@@ -33,14 +33,46 @@ router.get('/ticket/:ticketId', auth, async (req, res) => {
   }
 
   try {
-    // Query to fetch a single ticket by ticketId
-    const [ticket] = await db.query('SELECT * FROM supportTickets WHERE id = ?', [ticketId]);
+    // Query to fetch the ticket details
+    const [ticketResult] = await db.query(
+      `SELECT 
+        t.*, 
+        CONCAT(u.firstName, ' ', u.lastName) AS createdBy 
+      FROM supportTickets t
+      INNER JOIN users u ON t.userId = u.id
+      WHERE t.id = ?`,
+      [ticketId]
+    );
 
-    if (ticket.length === 0) {
+    if (ticketResult.length === 0) {
       return res.status(404).json({ message: 'Ticket not found.', success: false });
     }
 
-    res.status(200).json({ ticket: ticket[0], success: true });
+    const ticket = ticketResult[0]; // Extract the ticket details
+
+    // Query to fetch the comments for the ticket
+    const [comments] = await db.query(
+      `SELECT c.id, c.comment, c.createdAt, CONCAT(u.firstName, ' ', u.lastName) AS sender, u.roleId
+      FROM supportTicketComments c
+      INNER JOIN users u ON c.userId = u.id
+      WHERE c.ticketId = ? 
+      ORDER BY c.createdAt ASC`,
+      [ticketId]
+    );
+
+    // Transform the comments into the desired format
+    const messages = comments.map((comment) => ({
+      id: comment.id,
+      sender: comment.sender,
+      timestamp: new Date(comment.createdAt).toLocaleString(),
+      content: comment.comment,
+      isSupport: comment.roleId === 1 || comment.roleId === 3,
+    }));
+
+    // Add messages to the ticket object
+    ticket.messages = messages;
+
+    res.status(200).json({ ticket, success: true });
   } catch (error) {
     console.error('Error fetching ticket:', error);
     res.status(500).json({ message: 'Server error.', success: false });

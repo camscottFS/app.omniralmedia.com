@@ -7,6 +7,8 @@ import { useParams } from 'react-router-dom';
 import TicketCommentForm from './TicketCommentForm';
 import AnchorLink from '../anchorLink/AnchorLink';
 import { ArrowTurnDownLeftIcon } from '@heroicons/react/24/solid';
+import { TicketMessageType } from '../../utils/types/TicketMessageType';
+import { formatDate } from '../../utils/formatDate';
 
 interface TicketProps {
   user: UserType | null | undefined;
@@ -44,25 +46,6 @@ const Ticket: React.FC<TicketProps> = ({ user }) => {
     fetchTicket();
   }, [user]);
 
-  const messages = [
-    {
-      id: 1,
-      sender: 'Cameron Scott (omniral Support)',
-      timestamp: '10/22/2024 at 10:24 AM',
-      content:
-        "Thanks for reaching out to Pantheon support. Appservers are not permanent and can be regularly rotated as part of normal platform maintenance. Is there something specific you are trying to automate? Some of this might be possible via Terminus.\n\nThanks, Matthew Staff Customer Success Engineer Pantheon",
-      isSupport: true,
-    },
-    {
-      id: 2,
-      sender: 'Cameron Scott (You)',
-      timestamp: '10/22/2024 at 10:20 AM',
-      content:
-        "Hello!\n\nWe are wondering if these are permanent for our environments as we have to setup specific access to the environments for our own additional backup configuration.\n\nFor example, KSTP live has this appserver URI:\n\nappserver.live.ae32fbf8-9f12-4165-a54b-18a999778ea3.drush.in\n\nIs this ever going to change again or will it stay that way permanently unless we requested some sort of change?\n\nThanks,",
-      isSupport: false,
-    },
-  ];
-
   if (loading) {
     return <BarLoading />;
   }
@@ -74,7 +57,7 @@ const Ticket: React.FC<TicketProps> = ({ user }) => {
         <h1 className="text-3xl text-blue-900 mb-8 mt-4">{ticket.subject}</h1>
         <TicketCommentForm />
         <div className="max-w-4xl mx-auto">
-          {messages.map((message) => (
+          {ticket?.messages?.map((message: TicketMessageType) => (
             <div
               key={message.id}
               className={`mb-6 p-4 rounded-lg shadow-md ${message.isSupport ? 'bg-white' : 'bg-blue-100'
@@ -83,9 +66,9 @@ const Ticket: React.FC<TicketProps> = ({ user }) => {
               <div className="flex items-center mb-2">
                 <div
                   className={`w-10 h-10 rounded-full ${message.isSupport ? 'bg-gray-200' : 'bg-blue-500'
-                    } flex items-center justify-center text-white font-bold`}
+                    } flex items-center justify-center font-bold`}
                 >
-                  {message.isSupport ? 'M' : 'C'}
+                  {message.sender.slice(0, 1)}
                 </div>
                 <div className="ml-3">
                   <p
@@ -93,13 +76,29 @@ const Ticket: React.FC<TicketProps> = ({ user }) => {
                       }`}
                   >
                     {message.sender}
+                    {message.isSupport && ` (${process.env.REACT_APP_COMPANY_SHORT} Support)`}
                   </p>
-                  <p className="text-sm text-gray-500">{message.timestamp}</p>
+                  <p className="text-sm text-gray-500">{formatDate(message.timestamp, undefined, true)}</p>
                 </div>
               </div>
               <div className="text-gray-800 whitespace-pre-line">{message.content}</div>
             </div>
           ))}
+          <div className="mb-6 p-4 rounded-lg shadow-md bg-blue-100">
+            <div className="flex items-center mb-2">
+              <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
+                {ticket.createdBy.slice(0, 1)}
+              </div>
+              <div className="ml-3">
+                <p className="text-blue-800 font-bold">
+                  {ticket.createdBy}
+                  {ticket.userId === user?.id && ' (You)'}
+                </p>
+                <p className="text-sm text-gray-500">{formatDate(ticket.createdAt, undefined, true)}</p>
+              </div>
+            </div>
+            <div className="text-gray-800 whitespace-pre-line">{ticket.description}</div>
+          </div>
         </div>
       </div>
     </div>
