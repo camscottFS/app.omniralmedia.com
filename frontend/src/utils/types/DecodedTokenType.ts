@@ -6,5 +6,7 @@ export interface DecodedTokenType extends JwtPayload {
     username: string;
     email: string;
     roleId: number;
+    firstName: string;
+    lastName: string;
   };
 }
