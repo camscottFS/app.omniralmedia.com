@@ -67,12 +67,7 @@ const Projects: React.FC<ProjectsProps> = ({ user }) => {
       navigate('/');
     }
 
-    if (!user || user.clientId === null || user.clientId === undefined) {
-      console.log(user);
-      setError('Client ID not found. Unable to fetch projects.');
-      setLoading(false);
-      return;
-    }
+    if (user === undefined || user === null) return;
 
     fetchProjectsByClientId(user.clientId);
   }, [user]);

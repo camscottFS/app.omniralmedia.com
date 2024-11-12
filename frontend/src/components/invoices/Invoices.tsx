@@ -65,12 +65,7 @@ const Invoices: React.FC<InvoicesProps> = ({ user }) => {
       navigate('/');
     }
 
-    if (!user || user.clientId === null || user.clientId === undefined) {
-      console.log(user);
-      setError('Client ID not found. Unable to fetch invoices.');
-      setLoading(false);
-      return;
-    }
+    if (user === undefined || user === null) return;
 
     fetchInvoicesByClientId(user.clientId);
   }, [user]);
