@@ -73,8 +73,6 @@ const TicketCreate: React.FC<TicketCreateProps> = ({ user }) => {
     }
 
     if (!user || user.clientId === null || user.clientId === undefined) {
-      console.log(user);
-      setError('Client ID not found. Unable to fetch projects.');
       setLoading(false);
       return;
     }

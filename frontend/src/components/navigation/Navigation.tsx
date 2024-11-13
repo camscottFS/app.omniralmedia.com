@@ -27,9 +27,13 @@ const Navigation: React.FC<NavigationProps> = ({ user, setUser }) => {
         </div>
         <div className="flex items-center space-x-4">
           <div className="hidden md:flex space-x-6 mr-5">
-            <AnchorLink to="/projects" text="Projects" />
-            <AnchorLink to="/invoices" text="Invoices" />
-            <AnchorLink to="/support" text="Support" />
+            {user.roleId === 2 && (
+              <>
+                <AnchorLink to="/projects" text="Projects" />
+                <AnchorLink to="/invoices" text="Invoices" />
+                <AnchorLink to="/support" text="Support" />
+              </>
+            )}
           </div>
           <UserMenu
             user={user}
