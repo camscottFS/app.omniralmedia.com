@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import Login from '../login/Login';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { jwtDecode, JwtPayload } from "jwt-decode";
+import { UserType } from '../../utils/types/UserType';
+import Login from '../login/Login';
 import Dashboard from '../dashboard/Dashboard';
 import Navigation from '../navigation/Navigation';
 import NotFound from '../notFound/NotFound';
 import Register from '../register/Register';
 import Projects from '../projects/Projects';
 import Invoices from '../invoices/Invoices';
-import { UserType } from '../../utils/types/UserType';
 import Support from '../support/Support';
 import TicketCreate from '../support/TicketCreate';
 import Ticket from '../support/Ticket';
+import SettingsProfile from '../settings/SettingsProfile';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<UserType | null | undefined>(undefined);
@@ -58,6 +59,7 @@ const App: React.FC = () => {
           <Route path="/support" element={<Support user={user} />} />
           <Route path="/support/ticket/create/:type" element={<TicketCreate user={user} />} />
           <Route path="/support/ticket/:ticketId" element={<Ticket user={user} />} />
+          <Route path="/settings/profile" element={<SettingsProfile user={user} />} />
         </Routes>
       </main>
     </Router>
