@@ -13,6 +13,7 @@ import Support from '../support/Support';
 import TicketCreate from '../support/TicketCreate';
 import Ticket from '../support/Ticket';
 import SettingsProfile from '../settings/SettingsProfile';
+import SettingsLoginSecurity from '../settings/SettingsLoginSecurity';
 
 const App: React.FC = () => {
   const [user, setUser] = useState<UserType | null | undefined>(undefined);
@@ -60,6 +61,7 @@ const App: React.FC = () => {
           <Route path="/support/ticket/create/:type" element={<TicketCreate user={user} />} />
           <Route path="/support/ticket/:ticketId" element={<Ticket user={user} />} />
           <Route path="/settings/profile" element={<SettingsProfile user={user} />} />
+          <Route path="/settings/login-security" element={<SettingsLoginSecurity user={user} />} />
         </Routes>
       </main>
     </Router>

@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { isAdmin } from '../../utils/isAdmin';
 import { UserType } from '../../utils/types/UserType';
+import { getGravatarUrl } from '../../utils/getGravatarUrl';
+import Avatar from '../avatar/Avatar';
 
 interface UserMenuProps {
   user: UserType;
@@ -18,6 +20,7 @@ const UserMenu: React.FC<UserMenuProps> = ({ user, onLogout }) => {
         onMouseLeave={() => setIsHovered(false)}
         className="hidden md:flex items-center px-4 py-2 bg-blue-800 text-white rounded-lg hover:bg-blue-900 transition-colors"
       >
+        <Avatar user={user} size="small" />
         {user.firstName} {user.lastName}
       </button>
 

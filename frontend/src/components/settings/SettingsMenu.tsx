@@ -6,7 +6,7 @@ const SettingsMenu: React.FC = () => {
       <a className="block w-full mb-3" href="/settings/profile">
         Profile
       </a>
-      <a className="block w-full" href="/settings/profile">
+      <a className="block w-full" href="/settings/login-security">
         Login & Security
       </a>
     </div>
