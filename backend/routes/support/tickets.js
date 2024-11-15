@@ -2,6 +2,37 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../config/db');
 const auth = require('../../middleware/auth');
+const checkRole = require('../../middleware/checkRole');
+
+router.post('/tickets', auth, checkRole(3), async (req, res) => {
+  const { userId } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({ message: 'Please provide a user ID.', success: false });
+  }
+
+  try {
+    const [tickets] = await db.query(`
+      SELECT 
+        supportTickets.*, 
+        CONCAT(u1.firstName, ' ', u1.lastName) AS client,
+        CONCAT(u2.firstName, ' ', u2.lastName) AS supportUser
+      FROM supportTickets
+      JOIN users AS u1 ON supportTickets.userId = u1.id
+      LEFT JOIN users AS u2 ON supportTickets.supportUserId = u2.id
+      WHERE supportTickets.status != "resolved"
+    `);
+
+    if (tickets.length === 0) {
+      return res.status(404).json({ message: 'No tickets found.', success: false });
+    }
+
+    res.status(200).json({ tickets });
+  } catch (error) {
+    console.error('Error fetching tickets:', error);
+    res.status(500).json({ message: 'Server error.', success: false });
+  }
+});
 
 router.get('/ticket/user/:userId', auth, async (req, res) => {
   const { userId } = req.params;

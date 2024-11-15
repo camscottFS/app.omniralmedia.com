@@ -66,9 +66,10 @@ const Ticket: React.FC<TicketProps> = ({ user }) => {
   return (
     <div>
       <div className="lg:w-1/2 md:w-full">
-        <AnchorLink to="/support" text="Go back" icon={<ArrowTurnDownLeftIcon className="h-5 w-5" />} />
+        {user.roleId !== 3 && <AnchorLink to="/support" text="Go back" icon={<ArrowTurnDownLeftIcon className="h-5 w-5" />} />}
+        {user.roleId === 3 && <AnchorLink to="/dashboard" text="Go back" icon={<ArrowTurnDownLeftIcon className="h-5 w-5" />} />}
         <h1 className="text-3xl text-blue-900 mb-8 mt-4">{ticket.subject}</h1>
-        {ticket.status === 'open'
+        {ticket.status !== 'resolved'
           ? (
             <TicketCommentForm userId={user.id} ticketId={ticket.id} onCommentAdded={() => { }} />
           ) : (
