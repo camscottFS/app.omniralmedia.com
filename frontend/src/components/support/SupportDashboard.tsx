@@ -5,6 +5,7 @@ import axios from 'axios';
 import TicketProgress from './TicketProgress';
 import { formatDate } from '../../utils/formatDate';
 import { MoonIcon, SunIcon } from '@heroicons/react/24/solid';
+import SupportAssignee from './SupportAssignee';
 
 interface SupportDashboardProps {
   user: UserType | null | undefined;
@@ -80,7 +81,9 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ user }) => {
               <td className="py-4 font-semibold"><AnchorLink to={`/support/ticket/${ticket.id}`} text={ticket.id} /></td>
               <td className="py-4">{ticket.subject}</td>
               <td className="py-4">{ticket.client}</td>
-              <td className="py-4">{ticket.supportUser ? ticket.supportUser : null}</td>
+              <td className="py-4">
+                <SupportAssignee user={user} supportUser={ticket.supportUser} supportUserId={ticket.supportUserId} />
+              </td>
               <td className="py-4">
                 <TicketProgress status={ticket.status} />
               </td>
