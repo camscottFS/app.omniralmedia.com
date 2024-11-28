@@ -6,6 +6,7 @@ import TicketProgress from './TicketProgress';
 import { formatDate } from '../../utils/formatDate';
 import { MoonIcon, SunIcon } from '@heroicons/react/24/solid';
 import SupportAssignee from './SupportAssignee';
+import TicketPriority from './TicketPriority';
 
 interface SupportDashboardProps {
   user: UserType | null | undefined;
@@ -19,8 +20,7 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ user }) => {
   const fetchTickets = async () => {
     try {
       const token = sessionStorage.getItem('token');
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_HOST}/support/tickets`,
+      const response = await axios.post(`${process.env.REACT_APP_API_HOST}/support/tickets`,
         {
           userId: user?.id,
         },
@@ -82,14 +82,16 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ user }) => {
               <td className="py-4">{ticket.subject}</td>
               <td className="py-4">{ticket.client}</td>
               <td className="py-4">
-                <SupportAssignee user={user} supportUser={ticket.supportUser} supportUserId={ticket.supportUserId} />
+                <SupportAssignee user={user} ticketId={ticket.id} supportUser={ticket.supportUser} supportUserId={ticket.supportUserId} />
               </td>
               <td className="py-4">
-                <TicketProgress status={ticket.status} />
+                <TicketProgress status={ticket.status} onUpdateStatus={() => { }} />
               </td>
-              <td className="py-4">{formatDate(ticket.createdAt, undefined, true)}</td>
+              <td className="py-4">{formatDate(ticket.createdAt, 'en', true)}</td>
               <td className="py-4">TBD</td>
-              <td className="py-4 capitalize">{ticket.priority}</td>
+              <td className="py-4">
+                <TicketPriority priority={ticket.priority} />
+              </td>
             </tr>
           ))}
         </tbody>

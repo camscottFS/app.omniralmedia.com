@@ -1,20 +1,20 @@
+import { DateTime } from 'luxon';
+
 export const formatDate = (
   dateString: string,
-  locale?: string,
-  hours?: boolean
+  locale: string = 'en',
+  hours: boolean = false,
+  timeZone: string = 'local'
 ): string => {
-  const date = new Date(dateString);
+  const date = DateTime.fromISO(dateString, { locale });
 
-  if (isNaN(date.getTime())) {
+  if (!date.isValid) {
     throw new Error('Invalid date format');
   }
 
-  const options: Intl.DateTimeFormatOptions = {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    ...(hours && { hour: 'numeric', minute: 'numeric', hour12: true }),
-  };
+  const zonedDate = date.setZone(timeZone);
 
-  return date.toLocaleDateString(locale, options);
+  const format = hours ? "MMM d, yyyy 'at' h:mm a" : 'MMM d, yyyy';
+
+  return zonedDate.toFormat(format);
 };
