@@ -4,6 +4,6 @@ This application integrates with getharvestapp and provides clients information 
 
 The frontend is built with React/TypeScript/TailwindCSS
 
-The backend is featured a dockerized Node.js/MySQL server built with express
+The backend features a dockerized Node.js/MySQL server built with express
 
 More to come :)
