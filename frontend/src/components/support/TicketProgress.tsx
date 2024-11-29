@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Modal from '../modal/Modal';
 
 interface TicketProgressProps {
   status: string;
@@ -47,30 +48,24 @@ const TicketProgress: React.FC<TicketProgressProps> = ({ status, onUpdateStatus 
       </span>
 
       {isModalOpen && (
-        <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white rounded-lg shadow-lg p-6 w-80">
-            <h2 className="text-lg font-semibold mb-4 text-blue-800">Update Ticket Status</h2>
-            <ul className="space-y-2">
-              {statusOptions.map((option) => (
-                <li key={option.value}>
-                  <button
-                    className={`w-full text-left py-2 px-4 ${option.color} uppercase text-white`}
-                    onClick={() => handleStatusChange(option.value)}
-                    disabled={option.value === status}
-                  >
-                    {option.text}
-                  </button>
-                </li>
-              ))}
-            </ul>
-            <button
-              className="mt-4 w-full py-2 px-4 bg-red-500 text-white rounded hover:bg-red-600"
-              onClick={() => setModalOpen(false)}
-            >
-              Cancel
-            </button>
-          </div>
-        </div>
+        <Modal
+          title="Update Ticket Status"
+          setModalOpen={setModalOpen}
+        >
+          <ul className="space-y-2">
+            {statusOptions.map((option) => (
+              <li key={option.value}>
+                <button
+                  className={`w-full text-left py-2 px-4 ${option.color} uppercase text-white`}
+                  onClick={() => handleStatusChange(option.value)}
+                  disabled={option.value === status}
+                >
+                  {option.text}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </Modal>
       )}
     </div>
   );

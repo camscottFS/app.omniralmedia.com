@@ -224,7 +224,6 @@ const ProjectDetails: React.FC<ProjectDetailsProps> = ({ user, projectId }) => {
                   <td className="text-right">${task.costs.toFixed(2)}</td>
                 </tr>
               ))}
-              {/* Total Row */}
               <tr className="font-bold">
                 <td>Total</td>
                 <td>{totalHours.toFixed(2)}</td>
