@@ -20,7 +20,6 @@ router.post('/tickets', auth, checkRole(3), async (req, res) => {
       FROM supportTickets
       JOIN users AS u1 ON supportTickets.userId = u1.id
       LEFT JOIN users AS u2 ON supportTickets.supportUserId = u2.id
-      WHERE supportTickets.status != "resolved"
     `);
 
     if (tickets.length === 0) {
@@ -95,7 +94,7 @@ router.get('/tickets/:ticketId', auth, async (req, res) => {
     const messages = comments.map((comment) => ({
       id: comment.id,
       sender: comment.sender,
-      timestamp: new Date(comment.createdAt).toLocaleString(),
+      timestamp: comment.createdAt,
       content: comment.comment,
       isSupport: comment.roleId === 1 || comment.roleId === 3,
     }));

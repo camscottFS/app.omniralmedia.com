@@ -6,7 +6,7 @@ import { TicketType } from '../../utils/types/TicketType';
 import { useNavigate, useParams } from 'react-router-dom';
 import TicketCommentForm from './TicketCommentForm';
 import AnchorLink from '../anchorLink/AnchorLink';
-import { ArrowTurnDownLeftIcon } from '@heroicons/react/24/solid';
+import { ArrowTurnDownLeftIcon, TrashIcon } from '@heroicons/react/24/solid';
 import { TicketMessageType } from '../../utils/types/TicketMessageType';
 import { formatDate } from '../../utils/formatDate';
 import { verifyUser } from '../../utils/verifyUser';
@@ -46,6 +46,29 @@ const Ticket: React.FC<TicketProps> = ({ user }) => {
     }
   };
 
+  const deleteComment = async (commentId: number) => {
+    const token = sessionStorage.getItem('token');
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_API_HOST}/support/tickets/${ticketId}/comments/delete/${commentId}`,
+        { ticketId, commentId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      fetchTicket();
+    } catch (err) {
+      console.error('Error deleting comment:', err);
+      setError('Failed to delete comment. Please try again later.');
+    }
+  }
+
+  const onCommentAdded = () => {
+    fetchTicket();
+  }
+
   useEffect(() => {
     const token = sessionStorage.getItem('token');
     const decodedToken = verifyUser(token);
@@ -71,7 +94,7 @@ const Ticket: React.FC<TicketProps> = ({ user }) => {
         <h1 className="text-3xl text-blue-900 mb-8 mt-4">{ticket.subject}</h1>
         {ticket.status !== 'resolved'
           ? (
-            <TicketCommentForm userId={user.id} ticketId={ticket.id} onCommentAdded={() => { }} />
+            <TicketCommentForm userId={user.id} ticketId={ticket.id} onCommentAdded={onCommentAdded} />
           ) : (
             <div className="mb-6 p-4 rounded-lg shadow-md bg-orange-300">
               <p className="font-semibold">This ticket has been marked as resolved.</p>
@@ -86,7 +109,7 @@ const Ticket: React.FC<TicketProps> = ({ user }) => {
               className={`mb-6 p-4 rounded-lg shadow-md ${message.isSupport ? 'bg-white' : 'bg-blue-100'
                 }`}
             >
-              <div className="flex items-center mb-2">
+              <div className="flex items-center mb-4">
                 <div
                   className={`w-10 h-10 rounded-full ${message.isSupport ? 'bg-gray-200' : 'bg-blue-500'
                     } flex items-center justify-center font-bold`}
@@ -104,11 +127,23 @@ const Ticket: React.FC<TicketProps> = ({ user }) => {
                   <p className="text-sm text-gray-500">{formatDate(message.timestamp, undefined, true)}</p>
                 </div>
               </div>
-              <div className="text-gray-800 whitespace-pre-line">{message.content}</div>
+              <div className="text-gray-800 whitespace-pre-line flex align-center justify-between">
+                <div>
+                  {message.content}
+                </div>
+                <div>
+                  {user.roleId === 3 && message.isSupport && (
+                    <TrashIcon
+                      className="h-5 w-5 text-blue-800 hover:text-blue-900 cursor-pointer"
+                      onClick={() => { deleteComment(message.id) }}
+                    />
+                  )}
+                </div>
+              </div>
             </div>
           ))}
           <div className="mb-6 p-4 rounded-lg shadow-md bg-blue-100">
-            <div className="flex items-center mb-2">
+            <div className="flex items-center mb-4">
               <div className="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
                 {ticket.createdBy.slice(0, 1)}
               </div>

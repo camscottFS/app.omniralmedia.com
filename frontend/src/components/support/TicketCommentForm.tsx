@@ -7,7 +7,7 @@ import Message from '../message/Message';
 interface TicketCommentFormProps {
   userId: number;
   ticketId: number;
-  onCommentAdded: () => void; // Callback to refresh comments after adding
+  onCommentAdded: () => void;
 }
 
 const TicketCommentForm: React.FC<TicketCommentFormProps> = ({ userId, ticketId, onCommentAdded }) => {
@@ -39,8 +39,8 @@ const TicketCommentForm: React.FC<TicketCommentFormProps> = ({ userId, ticketId,
         }
       );
 
-      setComment(''); // Clear the comment box
-      onCommentAdded(); // Trigger refresh of comments
+      setComment('');
+      onCommentAdded();
     } catch (err) {
       console.error('Error adding comment:', err);
       setError('An error occured, failed to add comment.');
