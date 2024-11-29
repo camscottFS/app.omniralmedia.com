@@ -6,4 +6,6 @@ The frontend is built with React/TypeScript/TailwindCSS
 
 The backend features a dockerized Node.js/MySQL server built with express
 
+I will write more advanced readmes in the future once the application is in production.
+
 More to come :)
