@@ -17,10 +17,10 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ user }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showOpenTickets, setShowOpenTickets] = useState(true);
+  const token = sessionStorage.getItem('token');
 
   const fetchTickets = async () => {
     try {
-      const token = sessionStorage.getItem('token');
       const response = await axios.post(
         `${process.env.REACT_APP_API_HOST}/support/tickets`,
         {
@@ -44,6 +44,43 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ user }) => {
   useEffect(() => {
     fetchTickets();
   }, [user]);
+
+  const onUpdateStatus = async (type: string, newStatus: string, ticketId: number) => {
+    if (type === 'priority') {
+      try {
+        await axios.post(
+          `${process.env.REACT_APP_API_HOST}/support/tickets/${ticketId}/priority`,
+          {
+            priority: newStatus
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            }
+          }
+        );
+      } catch (err) {
+        setError('Failed to update ticket priority. Please try again later.');
+      }
+    } else if (type === 'status') {
+      try {
+        await axios.post(
+          `${process.env.REACT_APP_API_HOST}/support/tickets/${ticketId}/status`,
+          {
+            status: newStatus
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            }
+          }
+        );
+      } catch (err) {
+        setError('Failed to update ticket status. Please try again later.');
+      }
+    }
+    fetchTickets();
+  };
 
   // Filter tickets based on their status
   const filteredTickets = tickets.filter((ticket: any) =>
@@ -114,12 +151,12 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ user }) => {
                   />
                 </td>
                 <td className="py-4">
-                  <TicketProgress status={ticket.status} onUpdateStatus={() => { }} />
+                  <TicketProgress status={ticket.status} ticketId={ticket.id} onUpdateStatus={onUpdateStatus} />
                 </td>
                 <td className="py-4">{formatDate(ticket.createdAt, undefined, true)}</td>
                 <td className="py-4">TBD</td>
                 <td className="py-4">
-                  <TicketPriority priority={ticket.priority} />
+                  <TicketPriority priority={ticket.priority} ticketId={ticket.id} onUpdateStatus={onUpdateStatus} />
                 </td>
               </tr>
             ))}

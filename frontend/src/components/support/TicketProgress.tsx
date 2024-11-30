@@ -3,7 +3,8 @@ import Modal from '../modal/Modal';
 
 interface TicketProgressProps {
   status: string;
-  onUpdateStatus: (newStatus: string) => void;
+  ticketId: number;
+  onUpdateStatus: (status: string, newStatus: string, ticketId: number) => void;
 }
 
 const statusOptions = [
@@ -27,14 +28,14 @@ const statusMap: Record<string, { text: string; className: string }> = {
   },
 };
 
-const TicketProgress: React.FC<TicketProgressProps> = ({ status, onUpdateStatus }) => {
+const TicketProgress: React.FC<TicketProgressProps> = ({ status, ticketId, onUpdateStatus }) => {
   const [isModalOpen, setModalOpen] = useState(false);
   const statusInfo = statusMap[status];
 
   if (!statusInfo) return null;
 
-  const handleStatusChange = (newStatus: string) => {
-    onUpdateStatus(newStatus);
+  const handleStatusChange = (type: string, newStatus: string, ticketId: number) => {
+    onUpdateStatus(type, newStatus, ticketId);
     setModalOpen(false);
   };
 
@@ -57,7 +58,7 @@ const TicketProgress: React.FC<TicketProgressProps> = ({ status, onUpdateStatus 
               <li key={option.value}>
                 <button
                   className={`w-full text-left py-2 px-4 ${option.color} uppercase text-white`}
-                  onClick={() => handleStatusChange(option.value)}
+                  onClick={() => handleStatusChange('status', option.value, ticketId)}
                   disabled={option.value === status}
                 >
                   {option.text}
