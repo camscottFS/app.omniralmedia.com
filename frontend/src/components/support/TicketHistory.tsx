@@ -6,6 +6,12 @@ import { TicketType } from '../../utils/types/TicketType';
 import AnchorLink from '../anchorLink/AnchorLink';
 import { formatDate } from '../../utils/formatDate';
 
+const statuses: { [key: string]: { color: string; label: string } } = {
+  'in progress': { color: 'bg-blue-800', label: 'In Progress' },
+  'wfs': { color: 'bg-orange-600', label: 'Waiting for Support' },
+  'resolved': { color: 'bg-green-600', label: 'Resolved' },
+};
+
 interface TicketHistoryProps {
   userId: number | undefined;
 }
@@ -70,17 +76,9 @@ const TicketHistory: React.FC<TicketHistoryProps> = ({ userId }) => {
           <tbody className="text-left">
             {tickets.map((ticket) => (
               <tr key={ticket.id} className="hover:bg-gray-50">
-                <td className="px-4 py-2 capitalize flex items-center">
-                  {ticket.status === 'in progress' && (
-                    <div className="h-5 w-5 rounded-full bg-blue-800 mr-2" />
-                  )}
-                  {ticket.status === 'wfs' && (
-                    <div className="h-5 w-5 rounded-full bg-orange-600 mr-2" />
-                  )}
-                  {ticket.status === 'resolved' && (
-                    <div className="h-5 w-5 rounded-full bg-green-600 mr-2" />
-                  )}
-                  {ticket.status === 'wfs' ? 'Waiting for support' : ticket.status}
+                <td className="px-4 py-2 flex items-center">
+                  <div className={`h-5 w-5 rounded-full ${(statuses[ticket.status] as { color: string }).color || 'bg-gray-400'} mr-2`} />
+                  {statuses[ticket.status]?.label}
                 </td>
                 <td className="px-4 py-2">
                   <AnchorLink to={`/support/ticket/${ticket.id}`} text={ticket.id.toString()} />
