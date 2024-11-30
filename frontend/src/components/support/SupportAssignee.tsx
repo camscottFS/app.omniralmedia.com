@@ -10,7 +10,6 @@ interface SupportAssigneeProps {
 }
 
 const SupportAssignee: React.FC<SupportAssigneeProps> = ({ user, ticketId, supportUser, supportUserId }) => {
-  const [loading, setLoading] = useState(false);
   const [currentSupportUser, setCurrentSupportUser] = useState(supportUser || null);
   const [currentSupportUserId, setCurrentSupportUserId] = useState(supportUserId || null);
   const token = sessionStorage.getItem('token');
@@ -20,8 +19,6 @@ const SupportAssignee: React.FC<SupportAssigneeProps> = ({ user, ticketId, suppo
       console.error('User is not logged in or invalid.');
       return;
     }
-
-    setLoading(true);
 
     try {
       if (currentSupportUserId === user.id) {
@@ -53,8 +50,6 @@ const SupportAssignee: React.FC<SupportAssigneeProps> = ({ user, ticketId, suppo
       }
     } catch (error) {
       console.error('Error updating ticket assignment:', error);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -71,25 +66,22 @@ const SupportAssignee: React.FC<SupportAssigneeProps> = ({ user, ticketId, suppo
         <button
           className="uppercase py-1 px-2 bg-blue-800 text-white rounded-sm"
           onClick={assignOrUnassignTicket}
-          disabled={loading}
         >
-          {loading ? null : 'You'}
+          You
         </button>
       ) : currentSupportUser ? (
         <button
           className="uppercase py-1 px-2 bg-blue-800 text-white rounded-sm"
           onClick={assignOrUnassignTicket}
-          disabled={loading}
         >
-          {loading ? null : currentSupportUser}
+          {currentSupportUser}
         </button>
       ) : (
         <button
           className="uppercase py-1 px-2 bg-blue-800 text-white rounded-sm"
           onClick={assignOrUnassignTicket}
-          disabled={loading}
         >
-          {loading ? 'Assigning...' : 'None'}
+          None
         </button>
       )}
       <span
@@ -97,7 +89,6 @@ const SupportAssignee: React.FC<SupportAssigneeProps> = ({ user, ticketId, suppo
       >
         <button
           onClick={assignOrUnassignTicket}
-          disabled={loading}
         >
           {tooltipText}
         </button>
