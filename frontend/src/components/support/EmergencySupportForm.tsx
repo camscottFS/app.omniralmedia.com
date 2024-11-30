@@ -26,6 +26,7 @@ const EmergencySupportForm: React.FC<EmergencySupportFormProps> = ({ projects })
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
       <div>
+        <p className="text-red-800 mb-4">This ticket submission is reserved for <span className="font-semibold">emergency</span> support only.</p>
         <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
           Is this issue related to a project within your workspace?
         </label>

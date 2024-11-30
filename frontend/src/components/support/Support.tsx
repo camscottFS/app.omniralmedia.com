@@ -44,7 +44,7 @@ const Support: React.FC<SupportProps> = ({ user }) => {
           </h2>
         </div>
         <div className="p-4 shadow-lg rounded-bl-lg rounded-br-lg pb-6">
-          <p className="mb-6">24/7: Efficiently resolve issues and ensure team-wide visibility. Count on our guaranteed 1-hour response time.</p>
+          <p className="mb-6">Business Hours: Efficiently resolve issues and ensure team-wide visibility. Count on our guaranteed 1-hour response time during business hours.</p>
           <a href="/support/ticket/create/general" className="py-2 px-4 font-semibold text-white bg-blue-800 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Open support ticket</a>
         </div>
       </div>
