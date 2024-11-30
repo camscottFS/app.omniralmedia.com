@@ -47,7 +47,6 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ user }) => {
 
   const onUpdateStatus = async (type: string, newStatus: string, ticketId: number) => {
     if (type === 'priority') {
-      console.log(type, newStatus, ticketId);
       try {
         await axios.post(
           `${process.env.REACT_APP_API_HOST}/support/tickets/${ticketId}/priority`,
@@ -64,7 +63,6 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ user }) => {
         setError('Failed to update ticket priority. Please try again later.');
       }
     } else if (type === 'status') {
-      console.log(type, newStatus, ticketId);
       try {
         await axios.post(
           `${process.env.REACT_APP_API_HOST}/support/tickets/${ticketId}/status`,
