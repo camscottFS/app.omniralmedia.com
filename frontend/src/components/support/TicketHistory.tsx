@@ -19,7 +19,7 @@ interface TicketHistoryProps {
 const TicketHistory: React.FC<TicketHistoryProps> = ({ userId }) => {
   const [tickets, setTickets] = useState<TicketType[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState('')
 
   // Fetch all tickets for the user
   const fetchTickets = async () => {
