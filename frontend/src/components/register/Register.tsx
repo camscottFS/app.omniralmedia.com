@@ -168,7 +168,7 @@ const Register: React.FC<RegisterProps> = ({ user }) => {
               id="clientId"
               className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Enter client id"
-              value={lastName}
+              value={clientId}
               onChange={(e) => setClientId(e.target.value)}
               required
             />

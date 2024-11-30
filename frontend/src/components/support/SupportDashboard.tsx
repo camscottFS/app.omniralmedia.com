@@ -66,11 +66,13 @@ const SupportDashboard: React.FC<SupportDashboardProps> = ({ user }) => {
     fetchTickets();
   };
 
-  const filteredTickets = tickets.filter((ticket: any) =>
-    showOpenTickets
-      ? ['wfs', 'in progress'].includes(ticket.status)
-      : ticket.status === 'resolved'
-  );
+  const filteredTickets = tickets
+    .filter((ticket: any) =>
+      showOpenTickets
+        ? ['wfs', 'in progress'].includes(ticket.status)
+        : ticket.status === 'resolved'
+    )
+    .sort((a: any, b: any) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()); // Sort by date, newest first
 
   // Pagination logic
   const totalPages = Math.ceil(filteredTickets.length / ticketsPerPage);
