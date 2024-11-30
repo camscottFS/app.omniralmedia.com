@@ -16,6 +16,7 @@ const Login: React.FC<LoginProps> = ({ user, setUser }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   useEffect(() => {
     document.title = "Omniral Media - Login";
@@ -35,8 +36,12 @@ const Login: React.FC<LoginProps> = ({ user, setUser }) => {
       sessionStorage.setItem('token', token);
 
       const decodedToken = jwtDecode(token);
-      // @ts-ignore
-      setUser(decodedToken.user);
+      setError('');
+      setSuccess('Login successful! Redirecting to dashboard...');
+      setTimeout(() => {
+        // @ts-ignore
+        setUser(decodedToken.user);
+      }, 3000);
 
     } catch (error: any) {
       // Handle errors
@@ -60,6 +65,9 @@ const Login: React.FC<LoginProps> = ({ user, setUser }) => {
         <img src={Logo} alt="Logo" className="w-40 mx-auto" />
         {error && (
           <Message message={error} type="error" />
+        )}
+        {success && (
+          <Message message={success} type="success" />
         )}
         <form className="space-y-4" onSubmit={handleSubmit}>
           <div>
