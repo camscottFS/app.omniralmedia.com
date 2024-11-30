@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../../config/db');
 const auth = require('../../middleware/auth');
 
-router.post('/create', auth, async (req, res) => {
+router.post('/tickets/create', auth, async (req, res) => {
   const { userId, projectId, category, subject, description } = req.body;
 
   try {
@@ -16,8 +16,8 @@ router.post('/create', auth, async (req, res) => {
 
     // Insert the new support ticket into the database
     const [result] = await db.query(
-      'INSERT INTO supportTickets (userId, projectId, category, subject, description, status, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-      [userId, projectId, category, subject, description, 1, date, date]
+      'INSERT INTO supportTickets (userId, projectId, category, subject, description, status, priority, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [userId, projectId, category, subject, description, 'wfs', 'medium', date, date]
     );
 
     res.status(201).json({ message: 'Support ticket created successfully', ticketId: result.insertId, success: true });

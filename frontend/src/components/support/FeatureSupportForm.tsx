@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { verifyUser } from '../../utils/verifyUser';
 
 interface FeatureSupportFormProps {
-  projects: any;
+  projects: ProjectType[];
 }
 
 const FeatureSupportForm: React.FC<FeatureSupportFormProps> = ({ projects }) => {

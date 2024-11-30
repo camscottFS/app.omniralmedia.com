@@ -1,107 +1,194 @@
-import React, { useEffect } from 'react'
-import Button from '../button/Button'
+import React, { useEffect, useState } from 'react';
+import Button from '../button/Button';
 import { ProjectType } from '../../utils/types/ProjectType';
-import { verifyUser } from '../../utils/verifyUser';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import Message from '../message/Message';
 
 interface GeneralSupportFormProps {
-  projects: any;
+  projects: ProjectType[];
+  userId: number | undefined;
 }
 
-const GeneralSupportForm: React.FC<GeneralSupportFormProps> = ({ projects }) => {
+const GeneralSupportForm: React.FC<GeneralSupportFormProps> = ({ projects, userId }) => {
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => { return null }
+  const [formData, setFormData] = useState({
+    isRelated: true,
+    projectId: undefined,
+    category: '',
+    subject: '',
+    description: '',
+  });
+
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+
+  const token = sessionStorage.getItem('token');
 
   useEffect(() => {
-    const token = sessionStorage.getItem('token');
-    const decodedToken = verifyUser(token);
-
-    if (!decodedToken) {
-      sessionStorage.removeItem('token');
+    if (!token) {
       navigate('/');
     }
   }, [projects]);
 
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value, type } = e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
+    const checked = (e.target as HTMLInputElement).checked;
+    setFormData((prevState) => ({
+      ...prevState,
+      [name]: type === 'checkbox' || type === 'radio' ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    if (!userId) return;
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_HOST}/support/tickets/create`,
+        {
+          userId,
+          projectId: formData.isRelated ? formData.projectId : null,
+          category: formData.category,
+          subject: formData.subject,
+          description: formData.description,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.success) {
+        setSuccess('Support ticket created successfully. Redirecting...');
+        setFormData({
+          isRelated: false,
+          projectId: undefined,
+          category: '',
+          subject: '',
+          description: '',
+        });
+        setTimeout(() => {
+          navigate(`/support/ticket/${response.data.ticketId}`);
+        }, 3000);
+      }
+    } catch (err) {
+      console.error('Error creating support ticket:', err);
+      setError('Failed to create ticket. Please try again later.');
+    }
+  };
+
   return (
     <form className="space-y-4" onSubmit={handleSubmit}>
+      {error && <Message type="error" message={error} />}
+      {success && <Message type="success" message={success} />}
       <div>
-        <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+        <label htmlFor="relatedYes" className="block text-sm font-medium text-gray-700 mb-2">
           Is this issue related to a project within your workspace?
         </label>
         <div className="flex items-center mb-2">
-          <input id="relatedYes" type="radio" value={1} name="default-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+          <input
+            id="relatedYes"
+            type="radio"
+            name="isRelated"
+            value="true"
+            checked={formData.isRelated}
+            onChange={(e) => setFormData((prev) => ({ ...prev, isRelated: true }))}
+            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+          />
           <label htmlFor="relatedYes" className="ms-2 text-sm">Yes</label>
         </div>
         <div className="flex items-center">
-          <input checked id="relatedNo" type="radio" value={0} name="default-radio" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
+          <input
+            id="relatedNo"
+            type="radio"
+            name="isRelated"
+            value="false"
+            checked={!formData.isRelated}
+            onChange={(e) => setFormData((prev) => ({ ...prev, isRelated: false }))}
+            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500"
+          />
           <label htmlFor="relatedNo" className="ms-2 text-sm">No</label>
         </div>
       </div>
+      {formData.isRelated && (
+        <div>
+          <label htmlFor="projectId" className="block text-sm font-medium text-gray-700">
+            Project
+          </label>
+          <select
+            id="projectId"
+            name="projectId"
+            value={formData.projectId || ''}
+            onChange={handleInputChange}
+            className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">Select a project</option>
+            {projects.map((project) => (
+              <option key={project.id} value={project.id}>
+                {project.name}
+              </option>
+            ))}
+          </select>
+        </div>
+      )}
       <div>
-        <label htmlFor="project" className="block text-sm font-medium text-gray-700">
-          Project
-        </label>
-        <select
-          id="project"
-          className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        // value={roleId}
-        // onChange={(e) => setRoleId(e.target.value)}
-        >
-          <option value={0}>Select a project</option>
-          {projects.map((project: ProjectType) => (
-            <option key={project.id} value={project.id}>{project.name}</option>
-          ))}
-        </select>
-      </div>
-      <div>
-        <label htmlFor="ticketCategory" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="category" className="block text-sm font-medium text-gray-700">
           Ticket Category
         </label>
         <select
-          id="ticketCategory"
+          id="category"
+          name="category"
+          value={formData.category}
+          onChange={handleInputChange}
           className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-        // value={roleId}
-        // onChange={(e) => setRoleId(e.target.value)}
         >
-          <option value={0}>Select a category</option>
-          <option value={0}>Application</option>
-          <option value={0}>Billing</option>
-          <option value={0}>Performance</option>
-          <option value={0}>Other</option>
+          <option value="">Select a category</option>
+          <option value="Application">Application</option>
+          <option value="Billing">Billing</option>
+          <option value="Performance">Performance</option>
+          <option value="Other">Other</option>
         </select>
       </div>
       <div>
-        <label htmlFor="subjectLine" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="subject" className="block text-sm font-medium text-gray-700">
           Subject Line
         </label>
         <input
           type="text"
-          id="subjectLine"
+          id="subject"
+          name="subject"
+          value={formData.subject}
+          onChange={handleInputChange}
           className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Enter subject"
-          // value={username}
-          // onChange={(e) => setUsername(e.target.value)}
           required
         />
       </div>
       <div>
-        <label htmlFor="emailInput" className="block text-sm font-medium text-gray-700">
+        <label htmlFor="description" className="block text-sm font-medium text-gray-700">
           Description
         </label>
         <textarea
-          id="emailInput"
+          id="description"
+          name="description"
+          value={formData.description}
+          onChange={handleInputChange}
           className="w-full px-4 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           placeholder="Enter description"
-          // value={emailInput}
-          // onChange={(e) => setEmailInput(e.target.value)}
           required
         />
         <small>Fully describe your problem or request. Include affected environments, the URL of where you saw the problem, and the steps to reproduce it.</small>
       </div>
       <Button text="Create Ticket" type="submit" />
     </form>
-  )
-}
+  );
+};
 
 export default GeneralSupportForm;

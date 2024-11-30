@@ -6,7 +6,6 @@ import { ProjectType } from '../../utils/types/ProjectType';
 import Spinner from '../spinner/Spinner';
 import Message from '../message/Message';
 import axios from 'axios';
-import Button from '../button/Button';
 import GeneralSupportForm from './GeneralSupportForm';
 import EmergencySupportForm from './EmergencySupportForm';
 import FeatureSupportForm from './FeatureSupportForm';
@@ -101,7 +100,7 @@ const TicketCreate: React.FC<TicketCreateProps> = ({ user }) => {
         <>
           <h1 className="text-3xl text-blue-900 mb-8">Open general support ticket</h1>
           <div className="lg:w-1/2 md:w-full">
-            <GeneralSupportForm projects={projects} />
+            <GeneralSupportForm projects={projects} userId={user?.id} />
           </div>
         </>
       )}
