@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Message from '../message/Message';
-import BarLoading from '../loading/BarLoading'
+import BarLoading from '../loading/BarLoading';
 import { TicketType } from '../../utils/types/TicketType';
 import AnchorLink from '../anchorLink/AnchorLink';
+import { formatDate } from '../../utils/formatDate';
 
 interface TicketHistoryProps {
   userId: number | undefined;
@@ -23,10 +24,13 @@ const TicketHistory: React.FC<TicketHistoryProps> = ({ userId }) => {
         {
           headers: {
             Authorization: `Bearer ${token}`,
-          }
+          },
         }
       );
-      setTickets(response.data.tickets);
+      const sortedTickets = response.data.tickets.sort(
+        (a: TicketType, b: TicketType) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+      );
+      setTickets(sortedTickets);
       setLoading(false);
     } catch (err) {
       console.error('Error fetching tickets:', err);
@@ -37,7 +41,6 @@ const TicketHistory: React.FC<TicketHistoryProps> = ({ userId }) => {
 
   useEffect(() => {
     if (!userId) {
-      setError('User ID not provided.');
       setLoading(false);
       return;
     }
@@ -51,43 +54,47 @@ const TicketHistory: React.FC<TicketHistoryProps> = ({ userId }) => {
 
   return (
     <div>
+      {error && <Message type="error" message={error} />}
       {tickets.length === 0 ? (
         <p>You haven't created any tickets yet.</p>
       ) : (
-        <table className="table-auto w-full border-collapse border border-gray-300 rounded-lg">
+        <table className="table-fixed w-full border-collapse border border-gray-300 rounded-lg">
           <thead>
-            <tr className="bg-gray-100">
-              <th className="border border-gray-300 px-4 py-2 text-left">Status</th>
-              <th className="border border-gray-300 px-4 py-2 text-left">Ticket ID</th>
-              <th className="border border-gray-300 px-4 py-2 text-left">Subject</th>
-              <th className="border border-gray-300 px-4 py-2 text-left">Last Updated</th>
+            <tr className="border-b text-blue-900 text-left">
+              <th className="px-4 py-2 font-semibold text-left">Status</th>
+              <th className="px-4 py-2 font-semibold text-left">Ticket ID</th>
+              <th className="px-4 py-2 font-semibold text-left">Subject</th>
+              <th className="px-4 py-2 font-semibold text-left">Last Updated</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="text-left">
             {tickets.map((ticket) => (
               <tr key={ticket.id} className="hover:bg-gray-50">
-                <td className="border border-gray-300 px-4 py-2 capitalize flex items-center">
-                  {ticket.status === 'open'
-                    ? (
-                      <div className="h-5 w-5 rounded-full bg-green-600 mr-2" />
-                    ) : (
-                      <div className="h-5 w-5 rounded-full bg-gray-300 mr-2" />
-                    )
-                  }
-                  {ticket.status}
+                <td className="px-4 py-2 capitalize flex items-center">
+                  {ticket.status === 'in progress' && (
+                    <div className="h-5 w-5 rounded-full bg-blue-800 mr-2" />
+                  )}
+                  {ticket.status === 'wfs' && (
+                    <div className="h-5 w-5 rounded-full bg-orange-600 mr-2" />
+                  )}
+                  {ticket.status === 'resolved' && (
+                    <div className="h-5 w-5 rounded-full bg-green-600 mr-2" />
+                  )}
+                  {ticket.status === 'wfs' ? 'Waiting for support' : ticket.status}
                 </td>
-                <td className="border border-gray-300 px-4 py-2">{ticket.id}</td>
-                <td className="border border-gray-300 px-4 py-2">
+                <td className="px-4 py-2">
+                  <AnchorLink to={`/support/ticket/${ticket.id}`} text={ticket.id.toString()} />
+                </td>
+                <td className="px-4 py-2">
                   <AnchorLink to={`/support/ticket/${ticket.id}`} text={ticket.subject} />
                 </td>
-                <td className="border border-gray-300 px-4 py-2">{new Date(ticket.updatedAt).toLocaleString()}</td>
+                <td className="px-4 py-2">{formatDate(ticket.updatedAt, 'en', true)}</td>
               </tr>
             ))}
           </tbody>
         </table>
-      )
-      }
-    </div >
+      )}
+    </div>
   );
 };
 

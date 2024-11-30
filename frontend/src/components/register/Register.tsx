@@ -154,6 +154,7 @@ const Register: React.FC<RegisterProps> = ({ user }) => {
             onChange={(e) => setRoleId(e.target.value)}
           >
             <option value="2">Client</option>
+            <option value="3">Support</option>
             <option value="1">Admin</option>
           </select>
         </div>
